@@ -44,7 +44,8 @@ const NotificationCenter = () => {
   const fetchUnreadCount = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/notifications/unread-count', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_URL}/notifications/unread-count`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -72,7 +73,8 @@ const NotificationCenter = () => {
         includeArchived: filter === 'archived'
       });
 
-      const response = await fetch(`http://localhost:5000/api/notifications?${params}`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_URL}/notifications?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -102,7 +104,8 @@ const NotificationCenter = () => {
   const markAsRead = async (notificationId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_URL}/notifications/${notificationId}/read`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -123,7 +126,8 @@ const NotificationCenter = () => {
   const markAllAsRead = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/notifications/mark-all-read', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_URL}/notifications/mark-all-read`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -144,7 +148,8 @@ const NotificationCenter = () => {
   const deleteNotification = async (notificationId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/notifications/${notificationId}`, {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await fetch(`${API_URL}/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

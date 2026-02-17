@@ -21,8 +21,9 @@ const EditHistoryModal = ({ isOpen, onClose, messageId, currentText }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const response = await axios.get(
-        `http://localhost:5000/api/chat/messages/${messageId}/history`,
+        `${API_URL}/chat/messages/${messageId}/history`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setHistory(response.data.data || []);

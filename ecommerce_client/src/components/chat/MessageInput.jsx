@@ -155,7 +155,8 @@ const MessageInput = ({
       });
 
       // Upload files to backend
-      const uploadResponse = await fetch('http://localhost:5000/api/chat/upload', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const uploadResponse = await fetch(`${API_URL}/chat/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
