@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd ecommerce_client && npm install && npm run build",
+  "outputDirectory": "ecommerce_client/dist",
+  "installCommand": "cd ecommerce_client && npm install",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
