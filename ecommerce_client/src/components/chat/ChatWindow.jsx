@@ -34,25 +34,29 @@ const ChatWindow = ({ isOpen, onClose }) => {
 
   return (
     <div 
-      className="fixed right-6 left-0 z-40 max-w-4xl bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden border border-gray-200 sm:left-auto sm:w-[500px] md:w-[650px] lg:w-[800px]"
+      className="fixed z-40 bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden border border-gray-200"
       style={{ 
-        top: '20px',
+        top: '140px',
         bottom: '0px',
-        height: 'calc(100vh - 20px)',
-        maxHeight: '600px',
+        right: '20px',
+        width: '400px',
+        maxWidth: '90vw',
+        height: 'calc(100vh - 140px)',
+        maxHeight: 'calc(100vh - 140px)',
         margin: 0,
         marginBottom: 0,
         padding: 0,
         paddingBottom: 0
       }}
     >
-      {/* Header - Proper Size with Padding */}
+      {/* Header - Increased Size */}
       <div 
-        className="bg-blue-600 text-white px-3 py-2 flex items-center justify-between flex-shrink-0"
+        className="bg-blue-600 text-white px-4 flex items-center justify-between flex-shrink-0"
         style={{ 
-          minHeight: '48px',
-          paddingTop: '0.5rem',
-          paddingBottom: '0.5rem'
+          minHeight: '60px',
+          height: '60px',
+          paddingTop: '0.75rem',
+          paddingBottom: '0.75rem'
         }}
       >
         <div className="flex items-center space-x-2">
