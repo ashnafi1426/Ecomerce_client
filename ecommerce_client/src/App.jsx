@@ -37,6 +37,14 @@ import GuestCheckoutPage from './pages/customer/GuestCheckoutPage'
 import OrderTrackingPage from './pages/customer/OrderTrackingPage'
 import SellersListPage from './pages/customer/SellersListPage'
 import CustomerViewSellerProfilePage from './pages/customer/SellerProfilePage'
+import CategoriesPage from './pages/customer/CategoriesPage'
+import DealsPage from './pages/customer/DealsPage'
+import CustomerServicePage from './pages/customer/CustomerServicePage'
+import RecommendationsPage from './pages/customer/RecommendationsPage'
+import BrowsingHistoryPage from './pages/customer/BrowsingHistoryPage'
+import RegistryPage from './pages/customer/RegistryPage'
+import GiftCardsPage from './pages/customer/GiftCardsPage'
+import PrimePage from './pages/customer/PrimePage'
 
 // Seller Pages
 import SellerDashboardPage from './pages/seller/SellerDashboardPage'
@@ -114,6 +122,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
         </Route>
         <Route path="/seller-register" element={<SellerRegisterPage />} />
+        <Route path="/seller/register" element={<SellerRegisterPage />} />
 
         {/* Customer Routes - All use CustomerLayout */}
         <Route path="/" element={<CustomerLayout />}>
@@ -121,6 +130,12 @@ function App() {
           <Route path="product/:id" element={<ProductPageSimple />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="search" element={<SearchPage />} />
+          <Route path="categories" element={<CategoriesPage />} />
+          <Route path="deals" element={<DealsPage />} />
+          <Route path="customer-service" element={<CustomerServicePage />} />
+          <Route path="registry" element={<RegistryPage />} />
+          <Route path="gift-cards" element={<GiftCardsPage />} />
+          <Route path="prime" element={<PrimePage />} />
           <Route path="sellers" element={<SellersListPage />} />
           <Route path="seller/:sellerId/profile" element={<CustomerViewSellerProfilePage />} />
           <Route path="category/:categoryId" element={<CategoryPage />} />
@@ -135,6 +150,8 @@ function App() {
           <Route path="orders/:orderId" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
           <Route path="tracking/:orderId" element={<ProtectedRoute><TrackingPage /></ProtectedRoute>} />
           <Route path="wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
+          <Route path="recommendations" element={<ProtectedRoute><RecommendationsPage /></ProtectedRoute>} />
+          <Route path="browsing-history" element={<ProtectedRoute><BrowsingHistoryPage /></ProtectedRoute>} />
           <Route path="returns" element={<ProtectedRoute><CustomerReturnsPage /></ProtectedRoute>} />
           <Route path="customer/returns" element={<ProtectedRoute><CustomerReturnsPage /></ProtectedRoute>} />
           <Route path="account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />

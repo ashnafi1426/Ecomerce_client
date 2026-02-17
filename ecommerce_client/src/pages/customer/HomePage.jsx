@@ -392,10 +392,10 @@ const HomePage = () => {
   }
 
   return (
-    <div style={{ fontFamily: 'Amazon Ember, Arial, sans-serif', color: '#0F1111', lineHeight: '1.5', backgroundColor: '#F7F8F8', minHeight: '100vh' }}>
+    <div className="font-sans text-gray-900 leading-normal bg-gray-100 min-h-screen">
       
-      {/* AMAZON-STYLE HERO CAROUSEL */}
-      <section style={{ position: 'relative', height: '500px', overflow: 'hidden', marginBottom: '20px', backgroundColor: '#232F3E' }}>
+      {/* AMAZON-STYLE HERO CAROUSEL - RESPONSIVE */}
+      <section className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden mb-4 sm:mb-6 lg:mb-8 bg-gray-800">
         {carouselSlides.map((slide, index) => (
           <div
             key={slide.id}
@@ -425,48 +425,25 @@ const HomePage = () => {
               background: 'linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)'
             }}></div>
             
-            {/* Slide Content */}
-            <div style={{
-              position: 'relative',
-              zIndex: 2,
-              maxWidth: '1500px',
-              width: '100%',
-              padding: '0 40px',
-              display: 'flex',
-              alignItems: 'center',
-              height: '100%'
-            }}>
-              <div style={{ maxWidth: '600px' }}>
-                <h1 style={{
-                  fontSize: '3.5em',
-                  fontWeight: '700',
-                  color: '#fff',
-                  marginBottom: '20px',
+            {/* Slide Content - MOBILE RESPONSIVE */}
+            <div className="relative z-10 max-w-7xl w-full px-4 sm:px-6 md:px-8 lg:px-12 flex items-center h-full">
+              <div className="max-w-full sm:max-w-md md:max-w-lg lg:max-w-2xl">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-5 lg:mb-6" style={{
                   textShadow: '2px 2px 8px rgba(0,0,0,0.5)',
                   lineHeight: '1.2'
                 }}>
                   {slide.title}
                 </h1>
-                <p style={{
-                  fontSize: '1.5em',
-                  color: '#fff',
-                  marginBottom: '30px',
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-white mb-4 sm:mb-5 md:mb-6 lg:mb-8" style={{
                   textShadow: '1px 1px 4px rgba(0,0,0,0.5)'
                 }}>
                   {slide.subtitle}
                 </p>
                 <button
                   onClick={() => handleCategoryClick(slide.categoryName)}
+                  className="bg-amazon-orange hover:bg-amazon-orange-dark text-gray-900 px-4 sm:px-6 md:px-8 lg:px-10 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg font-bold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 touch-manipulation min-h-[44px]"
                   style={{
                     backgroundColor: '#FF9900',
-                    color: '#131921',
-                    padding: '16px 40px',
-                    fontSize: '1.1em',
-                    fontWeight: '700',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
                   }}
                   onMouseEnter={(e) => {
@@ -487,99 +464,36 @@ const HomePage = () => {
           </div>
         ))}
 
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows - MOBILE RESPONSIVE */}
         <button
           onClick={prevSlide}
-          style={{
-            position: 'absolute',
-            left: '20px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            color: '#131921',
-            width: '50px',
-            height: '50px',
-            borderRadius: '50%',
-            border: 'none',
-            fontSize: '1.5em',
-            cursor: 'pointer',
-            zIndex: 10,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = '#fff';
-            e.target.style.transform = 'translateY(-50%) scale(1.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'rgba(255,255,255,0.9)';
-            e.target.style.transform = 'translateY(-50%) scale(1)';
-          }}
+          className="absolute left-2 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-none text-lg sm:text-xl md:text-2xl cursor-pointer z-10 flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 touch-manipulation"
+          aria-label="Previous slide"
         >
           ‹
         </button>
 
         <button
           onClick={nextSlide}
-          style={{
-            position: 'absolute',
-            right: '20px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            color: '#131921',
-            width: '50px',
-            height: '50px',
-            borderRadius: '50%',
-            border: 'none',
-            fontSize: '1.5em',
-            cursor: 'pointer',
-            zIndex: 10,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = '#fff';
-            e.target.style.transform = 'translateY(-50%) scale(1.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'rgba(255,255,255,0.9)';
-            e.target.style.transform = 'translateY(-50%) scale(1)';
-          }}
+          className="absolute right-2 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-none text-lg sm:text-xl md:text-2xl cursor-pointer z-10 flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 touch-manipulation"
+          aria-label="Next slide"
         >
           ›
         </button>
 
-        {/* Slide Indicators */}
-        <div style={{
-          position: 'absolute',
-          bottom: '30px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: '12px',
-          zIndex: 10
-        }}>
+        {/* Slide Indicators - MOBILE RESPONSIVE */}
+        <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 lg:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-3 z-10">
           {carouselSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
+              className="transition-all duration-300 rounded-full border-none cursor-pointer shadow-md touch-manipulation"
               style={{
-                width: currentSlide === index ? '40px' : '12px',
-                height: '12px',
-                borderRadius: '6px',
-                border: 'none',
-                backgroundColor: currentSlide === index ? '#FF9900' : 'rgba(255,255,255,0.6)',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                width: currentSlide === index ? '24px' : '8px',
+                height: '8px',
+                backgroundColor: currentSlide === index ? '#FF9900' : 'rgba(255,255,255,0.6)'
               }}
+              aria-label={`Go to slide ${index + 1}`}
               onMouseEnter={(e) => {
                 if (currentSlide !== index) {
                   e.target.style.backgroundColor = 'rgba(255,255,255,0.9)';
@@ -595,47 +509,27 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* MAIN CONTENT */}
-      <main style={{ maxWidth: '1500px', margin: '0 auto', padding: '20px' }}>
-        {/* CATEGORY SHOWCASE CARDS - PLACED AT TOP */}
+      {/* MAIN CONTENT - RESPONSIVE */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+        {/* CATEGORY SHOWCASE CARDS - RESPONSIVE */}
         {categories.length > 0 && (
-          <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ 
-              fontSize: '2em', 
-              marginBottom: '20px', 
-              fontWeight: '700',
-              color: '#0F1111'
-            }}>
+          <div className="mb-6 sm:mb-8 lg:mb-12">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4 sm:mb-6 font-bold text-gray-900">
               Shop by Category
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               {categories.map((category) => {
                 const categoryProductCount = allProducts.filter(p => p.category_id === category.id).length;
                 return (
                 <div
                   key={category.id}
                   onClick={() => handleCategoryFilter(category.id)}
-                  style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', transition: 'transform 0.3s, box-shadow 0.3s', cursor: 'pointer', overflow: 'hidden' }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-5px)';
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                  }}
+                  className="bg-white p-4 sm:p-5 md:p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1"
                 >
-                  <h3 style={{ fontSize: '1.3em', marginBottom: '15px', color: '#0F1111' }}>
+                  <h3 className="text-base sm:text-lg md:text-xl mb-3 sm:mb-4 text-gray-900 font-semibold">
                     {getCategoryEmoji(category.name)} {category.name}
                   </h3>
-                  <div style={{ 
-                    width: '100%', 
-                    height: '200px', 
-                    borderRadius: '8px', 
-                    marginBottom: '15px',
-                    overflow: 'hidden',
-                    position: 'relative'
-                  }}>
+                  <div className="w-full h-40 sm:h-48 md:h-52 lg:h-56 rounded-lg mb-3 sm:mb-4 overflow-hidden relative">
                     <img
                       src={getCategoryCardImage(category.name)}
                       alt={category.name}
@@ -670,19 +564,12 @@ const HomePage = () => {
                       }}
                     />
                   </div>
-                  <p style={{ color: '#565959', fontSize: '0.9em', marginBottom: '10px' }}>
+                  <p className="text-gray-600 text-xs sm:text-sm mb-2">
                     {categoryProductCount} products available
                   </p>
-                  <span style={{ 
-                    color: '#146EB4', 
-                    fontSize: '0.9em', 
-                    fontWeight: '600',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                  }}>
+                  <span className="text-blue-600 text-sm sm:text-base font-semibold flex items-center gap-1">
                     Shop now 
-                    <span style={{ fontSize: '1.2em' }}>→</span>
+                    <span className="text-lg">→</span>
                   </span>
                 </div>
               );
@@ -694,104 +581,77 @@ const HomePage = () => {
         {/* AMAZON-STYLE PRODUCT SECTIONS */}
         {!loading && selectedCategory === 'all' && (
           <>
-            {/* TODAY'S DEALS SECTION */}
+            {/* TODAY'S DEALS SECTION - MOBILE-FIRST RESPONSIVE */}
             {todaysDeals.length > 0 && (
-              <section style={{ marginBottom: '40px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2 style={{ fontSize: '1.8em', margin: '0', fontWeight: '700', color: '#0F1111' }}>
+              <section className="mb-6 sm:mb-8 lg:mb-12">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Today's Deals
                   </h2>
                   <button
                     onClick={() => navigate('/deals')}
-                    style={{ 
-                      color: '#146EB4', 
-                      background: 'none', 
-                      border: 'none', 
-                      fontSize: '0.9em', 
-                      cursor: 'pointer',
-                      textDecoration: 'none'
-                    }}
+                    className="text-blue-600 bg-transparent border-none text-sm sm:text-base cursor-pointer hover:underline"
                   >
                     See all deals →
                   </button>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                  gap: '15px',
-                  backgroundColor: '#fff',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
                   {todaysDeals.slice(0, visibleDeals).map((product) => {
                     const discount = calculateDiscount(product.price, product.original_price);
                     return (
                       <div
                         key={product.id}
                         onClick={() => handleProductClick(product.id)}
-                        style={{ 
-                          cursor: 'pointer', 
-                          transition: 'transform 0.2s',
-                          padding: '10px',
-                          borderRadius: '4px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'scale(1.02)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'scale(1)';
-                        }}
+                        className="cursor-pointer transition-all duration-200 p-2 sm:p-3 rounded relative active:bg-gray-50 hover:shadow-lg border border-gray-100"
                       >
-                        <div style={{ 
-                          width: '100%', 
-                          height: '150px', 
-                          background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', 
-                          borderRadius: '4px', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center', 
-                          fontSize: '3em', 
-                          marginBottom: '10px',
-                          position: 'relative'
-                        }}>
+                        {/* PRODUCT IMAGE - Mobile-First with aspect-square */}
+                        <div className="w-full aspect-square bg-gradient-to-br from-purple-400 to-pink-600 rounded flex items-center justify-center mb-2 overflow-hidden relative">
                           {product.image_url && product.image_url.startsWith('http') ? (
                             <img
                               src={product.image_url}
                               alt={product.title || product.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                              className="w-full h-full object-contain"
+                              loading="lazy"
+                              style={{ maxWidth: '100%', maxHeight: '100%' }}
                               onError={(e) => {
                                 e.target.style.display = 'none';
-                                e.target.parentElement.innerHTML = '📦';
+                                const fallback = document.createElement('div');
+                                fallback.className = 'text-3xl sm:text-4xl md:text-5xl';
+                                fallback.textContent = '📦';
+                                e.target.parentElement.appendChild(fallback);
                               }}
                             />
-                          ) : '📦'}
+                          ) : (
+                            <div className="text-3xl sm:text-4xl md:text-5xl">📦</div>
+                          )}
                           {discount && (
-                            <div style={{
-                              position: 'absolute',
-                              top: '8px',
-                              left: '8px',
-                              backgroundColor: '#CC0C39',
-                              color: '#fff',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              fontSize: '0.7em',
-                              fontWeight: 'bold'
-                            }}>
+                            <div className="absolute top-1 left-1 bg-red-700 text-white px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold">
                               -{discount}%
                             </div>
                           )}
                         </div>
-                        <div style={{ fontSize: '0.85em', marginBottom: '5px', height: '32px', overflow: 'hidden' }}>
-                          {(product.title || product.name).substring(0, 50)}...
+                        
+                        {/* PRODUCT TITLE - Mobile Optimized */}
+                        <div className="text-[11px] sm:text-xs md:text-sm leading-tight mb-2 h-8 sm:h-9 overflow-hidden line-clamp-2 text-gray-900">
+                          {product.title || product.name}
                         </div>
-                        <div style={{ fontSize: '1.2em', fontWeight: '700', color: '#B12704' }}>
-                          ${Number(product.price).toFixed(2)}
+                        
+                        {/* PRICE - Bold and Clear with Block Display */}
+                        <div className="mb-1">
+                          <div className="text-sm sm:text-base md:text-lg font-bold text-red-700">
+                            ${Number(product.price).toFixed(2)}
+                          </div>
                           {product.original_price && (
-                            <span style={{ textDecoration: 'line-through', color: '#565959', fontSize: '0.7em', marginLeft: '8px' }}>
+                            <div className="text-[10px] sm:text-xs text-gray-500 line-through mt-0.5">
                               ${Number(product.original_price).toFixed(2)}
-                            </span>
+                            </div>
                           )}
+                        </div>
+                        
+                        {/* RATING - Separate Row on Mobile */}
+                        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-yellow-500">
+                          {renderStars(product.average_rating || product.rating)}
+                          <span className="text-blue-600">({product.total_reviews || product.reviews_count || 0})</span>
                         </div>
                       </div>
                     );
@@ -828,69 +688,59 @@ const HomePage = () => {
               </section>
             )}
 
-            {/* FEATURED PRODUCTS SECTION */}
+            {/* FEATURED PRODUCTS SECTION - MOBILE-FIRST RESPONSIVE */}
             {featuredProducts.length > 0 && (
-              <section style={{ marginBottom: '40px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2 style={{ fontSize: '1.8em', margin: '0', fontWeight: '700', color: '#0F1111' }}>
+              <section className="mb-6 sm:mb-8 lg:mb-12">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Featured Products
                   </h2>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
-                  gap: '20px',
-                  backgroundColor: '#fff',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
                   {featuredProducts.map((product) => (
                     <div
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
-                      style={{ 
-                        cursor: 'pointer', 
-                        transition: 'transform 0.3s, box-shadow 0.3s',
-                        padding: '15px',
-                        borderRadius: '4px',
-                        border: '1px solid #E7E7E7'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
+                      className="cursor-pointer transition-all duration-200 p-2 sm:p-3 rounded relative active:bg-gray-50 hover:shadow-lg border border-gray-100"
                     >
-                      <div style={{ width: '100%', height: '180px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4em', marginBottom: '15px' }}>
+                      {/* PRODUCT IMAGE - Mobile-First with aspect-square */}
+                      <div className="w-full aspect-square bg-gradient-to-br from-indigo-500 to-purple-600 rounded flex items-center justify-center mb-2 overflow-hidden">
                         {product.image_url && product.image_url.startsWith('http') ? (
                           <img
                             src={product.image_url}
                             alt={product.title || product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
                             onError={(e) => {
                               e.target.style.display = 'none';
-                              e.target.parentElement.innerHTML = '📦';
+                              const fallback = document.createElement('div');
+                              fallback.className = 'text-3xl sm:text-4xl md:text-5xl';
+                              fallback.textContent = '📦';
+                              e.target.parentElement.appendChild(fallback);
                             }}
                           />
-                        ) : '📦'}
+                        ) : (
+                          <div className="text-3xl sm:text-4xl md:text-5xl">📦</div>
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.95em', marginBottom: '8px', height: '40px', overflow: 'hidden' }}>
+                      
+                      {/* PRODUCT TITLE - Mobile Optimized */}
+                      <div className="text-[11px] sm:text-xs md:text-sm leading-tight mb-2 h-8 sm:h-9 overflow-hidden line-clamp-2 text-gray-900">
                         {product.title || product.name}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '8px', fontSize: '0.85em' }}>
-                        <span style={{ color: '#FF9900' }}>
-                          {renderStars(product.average_rating || product.rating)}
-                        </span>
-                        <span style={{ color: '#146EB4' }}>
-                          ({product.total_reviews || product.reviews_count || 0})
-                        </span>
+                      
+                      {/* PRICE - Bold and Clear with Block Display */}
+                      <div className="mb-1">
+                        <div className="text-sm sm:text-base md:text-lg font-bold text-red-700">
+                          ${Number(product.price).toFixed(2)}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '1.4em', fontWeight: '700', color: '#B12704' }}>
-                        ${Number(product.price).toFixed(2)}
+                      
+                      {/* RATING - Separate Row on Mobile */}
+                      <div className="flex items-center gap-1 text-[10px] sm:text-xs text-yellow-500">
+                        {renderStars(product.average_rating || product.rating)}
+                        <span className="text-blue-600">({product.total_reviews || product.reviews_count || 0})</span>
                       </div>
                     </div>
                   ))}
@@ -898,81 +748,64 @@ const HomePage = () => {
               </section>
             )}
 
-            {/* BEST SELLERS SECTION */}
+            {/* BEST SELLERS SECTION - MOBILE-FIRST RESPONSIVE */}
             {bestSellers.length > 0 && (
-              <section style={{ marginBottom: '40px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2 style={{ fontSize: '1.8em', margin: '0', fontWeight: '700', color: '#0F1111' }}>
+              <section className="mb-6 sm:mb-8 lg:mb-12">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Best Sellers
                   </h2>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                  gap: '15px',
-                  backgroundColor: '#fff',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
                   {bestSellers.slice(0, visibleBestSellers).map((product, index) => (
                     <div
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
-                      style={{ 
-                        cursor: 'pointer', 
-                        transition: 'transform 0.2s',
-                        padding: '10px',
-                        borderRadius: '4px',
-                        position: 'relative'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.02)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }}
+                      className="cursor-pointer transition-all duration-200 p-2 sm:p-3 rounded relative active:bg-gray-50 hover:shadow-lg border border-gray-100"
                     >
-                      <div style={{ 
-                        position: 'absolute',
-                        top: '5px',
-                        left: '5px',
-                        backgroundColor: '#FF9900',
-                        color: '#131921',
-                        padding: '2px 6px',
-                        borderRadius: '3px',
-                        fontSize: '0.7em',
-                        fontWeight: 'bold',
-                        zIndex: 1
-                      }}>
+                      {/* RANK BADGE */}
+                      <div className="absolute top-1 left-1 bg-yellow-500 text-gray-900 px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold z-10">
                         #{index + 1}
                       </div>
-                      <div style={{ width: '100%', height: '150px', background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3em', marginBottom: '10px' }}>
+                      
+                      {/* PRODUCT IMAGE - Mobile-First with aspect-square */}
+                      <div className="w-full aspect-square bg-gradient-to-br from-blue-400 to-cyan-400 rounded flex items-center justify-center mb-2 overflow-hidden">
                         {product.image_url && product.image_url.startsWith('http') ? (
                           <img
                             src={product.image_url}
                             alt={product.title || product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
                             onError={(e) => {
                               e.target.style.display = 'none';
-                              e.target.parentElement.innerHTML = '📦';
+                              const fallback = document.createElement('div');
+                              fallback.className = 'text-3xl sm:text-4xl md:text-5xl';
+                              fallback.textContent = '📦';
+                              e.target.parentElement.appendChild(fallback);
                             }}
                           />
-                        ) : '📦'}
+                        ) : (
+                          <div className="text-3xl sm:text-4xl md:text-5xl">📦</div>
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.85em', marginBottom: '5px', height: '32px', overflow: 'hidden' }}>
-                        {(product.title || product.name).substring(0, 50)}...
+                      
+                      {/* PRODUCT TITLE - Mobile Optimized */}
+                      <div className="text-[11px] sm:text-xs md:text-sm leading-tight mb-2 h-8 sm:h-9 overflow-hidden line-clamp-2 text-gray-900">
+                        {product.title || product.name}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginBottom: '5px', fontSize: '0.8em' }}>
-                        <span style={{ color: '#FF9900' }}>
-                          {renderStars(product.average_rating || product.rating)}
-                        </span>
-                        <span style={{ color: '#146EB4', fontSize: '0.75em' }}>
-                          ({product.total_reviews || product.reviews_count || 0})
-                        </span>
+                      
+                      {/* PRICE - Bold and Clear with Block Display */}
+                      <div className="mb-1">
+                        <div className="text-sm sm:text-base md:text-lg font-bold text-red-700">
+                          ${Number(product.price).toFixed(2)}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '1.2em', fontWeight: '700', color: '#B12704' }}>
-                        ${Number(product.price).toFixed(2)}
+                      
+                      {/* RATING - Separate Row on Mobile */}
+                      <div className="flex items-center gap-1 text-[10px] sm:text-xs text-yellow-500">
+                        {renderStars(product.average_rating || product.rating)}
+                        <span className="text-blue-600">({product.total_reviews || product.reviews_count || 0})</span>
                       </div>
                     </div>
                   ))}
@@ -1008,72 +841,55 @@ const HomePage = () => {
               </section>
             )}
 
-            {/* NEW ARRIVALS SECTION */}
+            {/* NEW ARRIVALS SECTION - MOBILE-FIRST RESPONSIVE */}
             {newArrivals.length > 0 && (
-              <section style={{ marginBottom: '40px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2 style={{ fontSize: '1.8em', margin: '0', fontWeight: '700', color: '#0F1111' }}>
+              <section className="mb-6 sm:mb-8 lg:mb-12">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     New Arrivals
                   </h2>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                  gap: '15px',
-                  backgroundColor: '#fff',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
                   {newArrivals.slice(0, visibleNewArrivals).map((product) => (
                     <div
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
-                      style={{ 
-                        cursor: 'pointer', 
-                        transition: 'transform 0.2s',
-                        padding: '10px',
-                        borderRadius: '4px',
-                        position: 'relative'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.02)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }}
+                      className="cursor-pointer transition-all duration-200 p-2 sm:p-3 rounded relative active:bg-gray-50 hover:shadow-lg border border-gray-100"
                     >
-                      <div style={{ 
-                        position: 'absolute',
-                        top: '5px',
-                        right: '5px',
-                        backgroundColor: '#00A652',
-                        color: '#fff',
-                        padding: '2px 6px',
-                        borderRadius: '3px',
-                        fontSize: '0.7em',
-                        fontWeight: 'bold',
-                        zIndex: 1
-                      }}>
+                      {/* NEW BADGE */}
+                      <div className="absolute top-1 right-1 bg-green-600 text-white px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold z-10">
                         NEW
                       </div>
-                      <div style={{ width: '100%', height: '150px', background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3em', marginBottom: '10px' }}>
+                      
+                      {/* PRODUCT IMAGE - Mobile-First with aspect-square */}
+                      <div className="w-full aspect-square bg-gradient-to-br from-pink-400 to-yellow-300 rounded flex items-center justify-center mb-2 overflow-hidden">
                         {product.image_url && product.image_url.startsWith('http') ? (
                           <img
                             src={product.image_url}
                             alt={product.title || product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
                             onError={(e) => {
                               e.target.style.display = 'none';
-                              e.target.parentElement.innerHTML = '📦';
+                              const fallback = document.createElement('div');
+                              fallback.className = 'text-3xl sm:text-4xl md:text-5xl';
+                              fallback.textContent = '📦';
+                              e.target.parentElement.appendChild(fallback);
                             }}
                           />
-                        ) : '📦'}
+                        ) : (
+                          <div className="text-3xl sm:text-4xl md:text-5xl">📦</div>
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.85em', marginBottom: '5px', height: '32px', overflow: 'hidden' }}>
-                        {(product.title || product.name).substring(0, 50)}...
+                      
+                      {/* PRODUCT TITLE - Mobile Optimized */}
+                      <div className="text-[11px] sm:text-xs md:text-sm leading-tight mb-2 h-8 sm:h-9 overflow-hidden line-clamp-2 text-gray-900">
+                        {product.title || product.name}
                       </div>
-                      <div style={{ fontSize: '1.2em', fontWeight: '700', color: '#B12704' }}>
+                      
+                      {/* PRICE - Bold and Clear */}
+                      <div className="text-sm sm:text-base md:text-lg font-bold text-red-700">
                         ${Number(product.price).toFixed(2)}
                       </div>
                     </div>
@@ -1110,66 +926,59 @@ const HomePage = () => {
               </section>
             )}
 
-            {/* RECOMMENDED FOR YOU SECTION */}
+            {/* RECOMMENDED FOR YOU SECTION - MOBILE-FIRST RESPONSIVE */}
             {recommendedProducts.length > 0 && (
-              <section style={{ marginBottom: '40px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2 style={{ fontSize: '1.8em', margin: '0', fontWeight: '700', color: '#0F1111' }}>
+              <section className="mb-6 sm:mb-8 lg:mb-12">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Recommended for You
                   </h2>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                  gap: '15px',
-                  backgroundColor: '#fff',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
                   {recommendedProducts.slice(0, visibleRecommended).map((product) => (
                     <div
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
-                      style={{ 
-                        cursor: 'pointer', 
-                        transition: 'transform 0.2s',
-                        padding: '10px',
-                        borderRadius: '4px'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.02)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }}
+                      className="cursor-pointer transition-all duration-200 p-2 sm:p-3 rounded active:bg-gray-50 hover:shadow-lg border border-gray-100"
                     >
-                      <div style={{ width: '100%', height: '150px', background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3em', marginBottom: '10px' }}>
+                      {/* PRODUCT IMAGE - Mobile-First with aspect-square */}
+                      <div className="w-full aspect-square bg-gradient-to-br from-teal-300 to-pink-200 rounded flex items-center justify-center mb-2 overflow-hidden">
                         {product.image_url && product.image_url.startsWith('http') ? (
                           <img
                             src={product.image_url}
                             alt={product.title || product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
                             onError={(e) => {
                               e.target.style.display = 'none';
-                              e.target.parentElement.innerHTML = '📦';
+                              const fallback = document.createElement('div');
+                              fallback.className = 'text-3xl sm:text-4xl md:text-5xl';
+                              fallback.textContent = '📦';
+                              e.target.parentElement.appendChild(fallback);
                             }}
                           />
-                        ) : '📦'}
+                        ) : (
+                          <div className="text-3xl sm:text-4xl md:text-5xl">📦</div>
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.85em', marginBottom: '5px', height: '32px', overflow: 'hidden' }}>
-                        {(product.title || product.name).substring(0, 50)}...
+                      
+                      {/* PRODUCT TITLE - Mobile Optimized */}
+                      <div className="text-[11px] sm:text-xs md:text-sm leading-tight mb-2 h-8 sm:h-9 overflow-hidden line-clamp-2 text-gray-900">
+                        {product.title || product.name}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginBottom: '5px', fontSize: '0.8em' }}>
-                        <span style={{ color: '#FF9900' }}>
-                          {renderStars(product.average_rating || product.rating)}
-                        </span>
-                        <span style={{ color: '#146EB4', fontSize: '0.75em' }}>
-                          ({product.total_reviews || product.reviews_count || 0})
-                        </span>
+                      
+                      {/* PRICE - Bold and Clear with Block Display */}
+                      <div className="mb-1">
+                        <div className="text-sm sm:text-base md:text-lg font-bold text-red-700">
+                          ${Number(product.price).toFixed(2)}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '1.2em', fontWeight: '700', color: '#B12704' }}>
-                        ${Number(product.price).toFixed(2)}
+                      
+                      {/* RATING - Separate Row on Mobile */}
+                      <div className="flex items-center gap-1 text-[10px] sm:text-xs text-yellow-500">
+                        {renderStars(product.average_rating || product.rating)}
+                        <span className="text-blue-600">({product.total_reviews || product.reviews_count || 0})</span>
                       </div>
                     </div>
                   ))}
@@ -1205,81 +1014,64 @@ const HomePage = () => {
               </section>
             )}
 
-            {/* TRENDING NOW SECTION */}
+            {/* TRENDING NOW SECTION - MOBILE-FIRST RESPONSIVE */}
             {trendingProducts.length > 0 && (
-              <section style={{ marginBottom: '40px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2 style={{ fontSize: '1.8em', margin: '0', fontWeight: '700', color: '#0F1111' }}>
+              <section className="mb-6 sm:mb-8 lg:mb-12">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     🔥 Trending Now
                   </h2>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                  gap: '15px',
-                  backgroundColor: '#fff',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
                   {trendingProducts.slice(0, visibleTrending).map((product) => (
                     <div
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
-                      style={{ 
-                        cursor: 'pointer', 
-                        transition: 'transform 0.2s',
-                        padding: '10px',
-                        borderRadius: '4px',
-                        position: 'relative'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.02)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'scale(1)';
-                      }}
+                      className="cursor-pointer transition-all duration-200 p-2 sm:p-3 rounded relative active:bg-gray-50 hover:shadow-lg border border-gray-100"
                     >
-                      <div style={{ 
-                        position: 'absolute',
-                        top: '5px',
-                        left: '5px',
-                        backgroundColor: '#FF4500',
-                        color: '#fff',
-                        padding: '2px 6px',
-                        borderRadius: '3px',
-                        fontSize: '0.7em',
-                        fontWeight: 'bold',
-                        zIndex: 1
-                      }}>
+                      {/* HOT BADGE */}
+                      <div className="absolute top-1 left-1 bg-red-600 text-white px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold z-10">
                         🔥 HOT
                       </div>
-                      <div style={{ width: '100%', height: '150px', background: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3em', marginBottom: '10px' }}>
+                      
+                      {/* PRODUCT IMAGE - Mobile-First with aspect-square */}
+                      <div className="w-full aspect-square bg-gradient-to-br from-pink-400 to-purple-400 rounded flex items-center justify-center mb-2 overflow-hidden">
                         {product.image_url && product.image_url.startsWith('http') ? (
                           <img
                             src={product.image_url}
                             alt={product.title || product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
                             onError={(e) => {
                               e.target.style.display = 'none';
-                              e.target.parentElement.innerHTML = '📦';
+                              const fallback = document.createElement('div');
+                              fallback.className = 'text-3xl sm:text-4xl md:text-5xl';
+                              fallback.textContent = '📦';
+                              e.target.parentElement.appendChild(fallback);
                             }}
                           />
-                        ) : '📦'}
+                        ) : (
+                          <div className="text-3xl sm:text-4xl md:text-5xl">📦</div>
+                        )}
                       </div>
-                      <div style={{ fontSize: '0.85em', marginBottom: '5px', height: '32px', overflow: 'hidden' }}>
-                        {(product.title || product.name).substring(0, 50)}...
+                      
+                      {/* PRODUCT TITLE - Mobile Optimized */}
+                      <div className="text-[11px] sm:text-xs md:text-sm leading-tight mb-2 h-8 sm:h-9 overflow-hidden line-clamp-2 text-gray-900">
+                        {product.title || product.name}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginBottom: '5px', fontSize: '0.8em' }}>
-                        <span style={{ color: '#FF9900' }}>
-                          {renderStars(product.average_rating || product.rating)}
-                        </span>
-                        <span style={{ color: '#146EB4', fontSize: '0.75em' }}>
-                          ({product.total_reviews || product.reviews_count || 0})
-                        </span>
+                      
+                      {/* PRICE - Bold and Clear with Block Display */}
+                      <div className="mb-1">
+                        <div className="text-sm sm:text-base md:text-lg font-bold text-red-700">
+                          ${Number(product.price).toFixed(2)}
+                        </div>
                       </div>
-                      <div style={{ fontSize: '1.2em', fontWeight: '700', color: '#B12704' }}>
-                        ${Number(product.price).toFixed(2)}
+                      
+                      {/* RATING - Separate Row on Mobile */}
+                      <div className="flex items-center gap-1 text-[10px] sm:text-xs text-yellow-500">
+                        {renderStars(product.average_rating || product.rating)}
+                        <span className="text-blue-600">({product.total_reviews || product.reviews_count || 0})</span>
                       </div>
                     </div>
                   ))}
@@ -1319,32 +1111,25 @@ const HomePage = () => {
         
         {/* FILTERED PRODUCTS */}
         {filteredProducts.length > 0 && (
-          <div id="products-section">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
-              <div>
-                <h2 style={{ fontSize: '1.8em', margin: '0 0 5px 0', fontWeight: '700' }}>
+          <div id="products-section" className="px-2 sm:px-4 md:px-6">
+            {/* HEADER WITH TITLE AND CONTROLS */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-5 md:mb-6 gap-3 sm:gap-4">
+              <div className="w-full sm:w-auto">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
                   {selectedCategory === 'all' ? 'All Products' : 
                    `${categories.find(c => c.id === selectedCategory)?.name || 'Category'} Products`}
                 </h2>
-                <span style={{ color: '#565959', fontSize: '0.9em' }}>
+                <span className="text-xs sm:text-sm md:text-base text-gray-600">
                   {filteredProducts.length} results
                 </span>
               </div>
               
               {/* SORTING AND FILTERING CONTROLS */}
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  style={{
-                    padding: '8px 12px',
-                    border: '1px solid #D5D9D9',
-                    borderRadius: '8px',
-                    backgroundColor: '#fff',
-                    color: '#0F1111',
-                    fontSize: '0.9em',
-                    cursor: 'pointer'
-                  }}
+                  className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-xs sm:text-sm cursor-pointer hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 >
                   <option value="featured">Featured</option>
                   <option value="price-low">Price: Low to High</option>
@@ -1353,88 +1138,86 @@ const HomePage = () => {
                   <option value="newest">Newest Arrivals</option>
                 </select>
                 
-                <div style={{ display: 'flex', gap: '5px', alignItems: 'center', padding: '8px 12px', border: '1px solid #D5D9D9', borderRadius: '8px', backgroundColor: '#fff' }}>
-                  <span style={{ fontSize: '0.85em', color: '#565959' }}>Price:</span>
+                <div className="flex gap-2 items-center px-2 sm:px-3 py-2 border border-gray-300 rounded-lg bg-white">
+                  <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Price:</span>
                   <input
                     type="number"
                     placeholder="Min"
                     value={priceRange.min}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) || 0 }))}
-                    style={{ width: '60px', padding: '4px', border: '1px solid #D5D9D9', borderRadius: '4px', fontSize: '0.85em' }}
+                    className="w-14 sm:w-16 md:w-20 px-1 sm:px-2 py-1 border border-gray-300 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <span style={{ color: '#565959' }}>-</span>
+                  <span className="text-gray-600 text-xs sm:text-sm">-</span>
                   <input
                     type="number"
                     placeholder="Max"
                     value={priceRange.max}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) || 10000 }))}
-                    style={{ width: '60px', padding: '4px', border: '1px solid #D5D9D9', borderRadius: '4px', fontSize: '0.85em' }}
+                    className="w-14 sm:w-16 md:w-20 px-1 sm:px-2 py-1 border border-gray-300 rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+            {/* PRODUCTS GRID - iPhone SE Optimized */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-5 mb-6 sm:mb-8 md:mb-10">
               {filteredProducts.map((product) => {
                 const discount = calculateDiscount(product.price, product.original_price);
                 return (
-                  <a
+                  <div
                     key={product.id}
-                    href={`/product/${product.id}`}
-                    onClick={(e) => { e.preventDefault(); handleProductClick(product.id); }}
-                    style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '4px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', transition: 'transform 0.3s, box-shadow 0.3s', cursor: 'pointer', textDecoration: 'none', color: '#0F1111', display: 'block' }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
-                    }}
+                    onClick={() => handleProductClick(product.id)}
+                    className="bg-white p-2 sm:p-3 md:p-4 rounded border border-gray-100 hover:shadow-lg transition-all duration-200 cursor-pointer active:bg-gray-50"
                   >
-                    <div style={{ width: '100%', height: '200px', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4em', marginBottom: '10px' }}>
+                    {/* PRODUCT IMAGE - Optimized for iPhone SE */}
+                    <div className="w-full aspect-square bg-gradient-to-br from-purple-400 to-pink-500 rounded flex items-center justify-center mb-2 overflow-hidden relative">
                       {product.image_url && product.image_url.startsWith('http') ? (
                         <img
                           src={product.image_url}
                           alt={product.title || product.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                          className="w-full h-full object-contain"
+                          loading="lazy"
+                          style={{ maxWidth: '100%', maxHeight: '100%' }}
                           onError={(e) => {
                             e.target.style.display = 'none';
-                            e.target.parentElement.innerHTML = '📦';
+                            const fallback = document.createElement('div');
+                            fallback.className = 'text-3xl sm:text-4xl md:text-5xl';
+                            fallback.textContent = '📦';
+                            e.target.parentElement.appendChild(fallback);
                           }}
                         />
-                      ) : '📦'}
-                    </div>
-                    <div style={{ fontSize: '0.95em', marginBottom: '8px', height: '40px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {product.title || product.name}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '8px', fontSize: '0.85em' }}>
-                      <span style={{ color: '#FF9900' }}>
-                        {renderStars(product.average_rating || product.rating)}
-                      </span>
-                      <span style={{ color: '#146EB4' }}>
-                        ({product.total_reviews || product.reviews_count || 0})
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '1.5em', fontWeight: '700', marginBottom: '5px' }}>
-                      ${Number(product.price).toFixed(2)}
-                      {product.original_price && (
-                        <span style={{ textDecoration: 'line-through', color: '#565959', fontSize: '0.6em', marginLeft: '10px' }}>
-                          ${Number(product.original_price).toFixed(2)}
-                        </span>
+                      ) : (
+                        <div className="text-3xl sm:text-4xl md:text-5xl">📦</div>
+                      )}
+                      {discount && (
+                        <div className="absolute top-1 left-1 bg-red-700 text-white px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold z-10">
+                          -{discount}%
+                        </div>
                       )}
                     </div>
-                    {discount && (
-                      <span style={{ display: 'inline-block', backgroundColor: '#CC0C39', color: '#fff', padding: '3px 8px', borderRadius: '3px', fontSize: '0.75em', marginTop: '5px' }}>
-                        {discount}% OFF
-                      </span>
-                    )}
-                    {/* Approval Status Badge for debugging */}
-                    {process.env.NODE_ENV === 'development' && (
-                      <div style={{ fontSize: '0.7em', color: '#565959', marginTop: '5px' }}>
-                        Status: {product.approval_status} | {product.status}
+                    
+                    {/* PRODUCT TITLE - iPhone SE Optimized */}
+                    <div className="text-[11px] sm:text-xs md:text-sm leading-tight mb-2 h-8 sm:h-9 overflow-hidden line-clamp-2 text-gray-900">
+                      {product.title || product.name}
+                    </div>
+                    
+                    {/* PRICE - Bold and Clear with Block Display */}
+                    <div className="mb-1">
+                      <div className="text-sm sm:text-base md:text-lg font-bold text-red-700">
+                        ${Number(product.price).toFixed(2)}
                       </div>
-                    )}
-                  </a>
+                      {product.original_price && (
+                        <div className="text-[10px] sm:text-xs text-gray-500 line-through mt-0.5">
+                          ${Number(product.original_price).toFixed(2)}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* RATING - Separate Row on Mobile */}
+                    <div className="flex items-center gap-1 text-[10px] sm:text-xs text-yellow-500">
+                      {renderStars(product.average_rating || product.rating)}
+                      <span className="text-blue-600">({product.total_reviews || product.reviews_count || 0})</span>
+                    </div>
+                  </div>
                 );
               })}
             </div>
@@ -1443,12 +1226,12 @@ const HomePage = () => {
 
         {/* NO PRODUCTS MESSAGE */}
         {!loading && filteredProducts.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '4em', marginBottom: '20px' }}>📦</div>
-            <h3 style={{ fontSize: '1.5em', marginBottom: '10px', color: '#0F1111' }}>
+          <div className="text-center py-10 sm:py-12 md:py-16 px-4 sm:px-6 bg-white rounded-lg shadow-md mx-2 sm:mx-4 md:mx-6">
+            <div className="text-5xl sm:text-6xl md:text-7xl mb-4 sm:mb-6">📦</div>
+            <h3 className="text-xl sm:text-2xl md:text-3xl mb-2 sm:mb-3 text-gray-900 font-semibold">
               {selectedCategory === 'all' ? 'No products available' : 'No products in this category'}
             </h3>
-            <p style={{ color: '#565959', marginBottom: '20px' }}>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 sm:mb-6">
               {selectedCategory === 'all' 
                 ? 'Check back later for new products.' 
                 : 'Try browsing other categories or view all products.'}
@@ -1456,7 +1239,7 @@ const HomePage = () => {
             {selectedCategory !== 'all' && (
               <button
                 onClick={() => handleCategoryFilter('all')}
-                style={{ backgroundColor: '#146EB4', color: '#fff', padding: '12px 24px', borderRadius: '8px', fontWeight: '600', border: 'none', cursor: 'pointer' }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-colors duration-200 min-h-[44px] touch-manipulation"
               >
                 View All Products
               </button>
@@ -1465,41 +1248,22 @@ const HomePage = () => {
         )}
       </main>
 
-      {/* BACK TO TOP BUTTON */}
+      {/* BACK TO TOP BUTTON - MOBILE RESPONSIVE */}
       {showBackToTop && (
         <button
           onClick={scrollToTop}
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 bg-amazon-orange hover:bg-amazon-orange-dark text-gray-900 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-none text-lg sm:text-xl md:text-2xl cursor-pointer shadow-lg hover:shadow-xl z-[1000] transition-all duration-300 flex items-center justify-center font-bold hover:-translate-y-1 active:translate-y-0 touch-manipulation"
           style={{
-            position: 'fixed',
-            bottom: '30px',
-            right: '30px',
-            backgroundColor: '#FF9900',
-            color: '#131921',
-            width: '50px',
-            height: '50px',
-            borderRadius: '50%',
-            border: 'none',
-            fontSize: '1.5em',
-            cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            zIndex: 1000,
-            transition: 'all 0.3s',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold'
+            backgroundColor: '#FF9900'
           }}
           onMouseEnter={(e) => {
             e.target.style.backgroundColor = '#e88900';
-            e.target.style.transform = 'translateY(-3px)';
-            e.target.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
           }}
           onMouseLeave={(e) => {
             e.target.style.backgroundColor = '#FF9900';
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
           }}
           title="Back to top"
+          aria-label="Scroll back to top"
         >
           ↑
         </button>

@@ -22,8 +22,8 @@ const SellersListPage = () => {
   const fetchSellers = async () => {
     try {
       setLoading(true);
-      // Try public endpoint first
-      const response = await api.get('/sellers');
+      // Use public browse endpoint
+      const response = await api.get('/sellers/browse');
       setSellers(response.data.data || []);
       setError(null);
     } catch (err) {
