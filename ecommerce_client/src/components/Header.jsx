@@ -176,22 +176,33 @@ const Header = () => {
             align-items: center !important;
             gap: 4px !important;
             padding: 4px 8px !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 4px !important;
           }
           
           .mobile-username {
-            display: block !important;
-            font-size: 12px !important;
-            max-width: 80px !important;
+            display: inline-block !important;
+            font-size: 11px !important;
+            max-width: 70px !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             white-space: nowrap !important;
+            font-weight: 600 !important;
+            color: white !important;
           }
           
           /* Ensure username is visible on all mobile devices */
           .mobile-icon span.text-xs {
-            display: block !important;
+            display: inline-block !important;
             visibility: visible !important;
             opacity: 1 !important;
+            font-size: 11px !important;
+          }
+          
+          /* Account icon styling */
+          .mobile-account-icon {
+            font-size: 20px !important;
+            flex-shrink: 0 !important;
           }
           
           /* Cart badge */
@@ -286,9 +297,19 @@ const Header = () => {
           
           /* Ensure username is visible on iPhone SE */
           .mobile-icon span.text-xs {
-            display: block !important;
+            display: inline-block !important;
             font-size: 10px !important;
-            max-width: 60px !important;
+            max-width: 55px !important;
+            font-weight: 600 !important;
+          }
+          
+          .mobile-account-with-name {
+            padding: 3px 6px !important;
+            gap: 3px !important;
+          }
+          
+          .mobile-account-icon {
+            font-size: 18px !important;
           }
           
           .mobile-cart-badge {
@@ -527,15 +548,15 @@ const Header = () => {
 
           {/* Right Section: Account + Wishlist + Cart */}
           <div className="mobile-right-section">
-            {/* Account Icon */}
+            {/* Account Icon with Display Name */}
             {isAuthenticated ? (
               <div 
                 ref={accountMenuRef}
-                className="mobile-icon relative flex items-center justify-center gap-1 border border-transparent rounded hover:border-white cursor-pointer px-2"
+                className="mobile-account-with-name relative flex items-center gap-1 border border-transparent rounded hover:border-white cursor-pointer"
                 onClick={() => setShowAccountMenu(!showAccountMenu)}
               >
-                <span className="text-2xl">👤</span>
-                <span className="text-xs text-white whitespace-nowrap block">
+                <span className="mobile-account-icon">👤</span>
+                <span className="mobile-username text-xs text-white whitespace-nowrap">
                   {user?.display_name || user?.name || user?.email?.split('@')[0] || 'User'}
                 </span>
                 

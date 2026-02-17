@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Create axios instance
 const apiClient = axios.create({
@@ -45,11 +45,30 @@ apiClient.interceptors.response.use(
   (error) => {
     console.error('🚨 API Error Details:', {
       message: error.message,
+      code: error.code,
       status: error.response?.status,
       statusText: error.response?.statusText,
       url: error.config?.url,
-      method: error.config?.method
+      method: error.config?.method,
+      baseURL: error.config?.baseURL
     });
+    
+    // Handle network errors (no response from server)
+    if (!error.response) {
+      if (error.code === 'ECONNABORTED') {
+        console.error('❌ Request timeout');
+        toast.error('Request timeout. Please check your connection.');
+        return Promise.reject(new Error('Request timeout. Please check your connection.'));
+      } else if (error.code === 'ERR_NETWORK') {
+        console.error('❌ Network error - Cannot reach server');
+        toast.error('Cannot connect to server. Please check if the backend is running.');
+        return Promise.reject(new Error('No response from server. Please check your connection.'));
+      } else {
+        console.error('❌ Network error - No response from server');
+        toast.error('Network error. Please check your internet connection.');
+        return Promise.reject(new Error('No response from server. Please check your connection.'));
+      }
+    }
     
     // Handle specific HTTP status codes
     if (error.response?.status === 401) {
@@ -66,10 +85,12 @@ apiClient.interceptors.response.use(
       toast.error('Resource not found');
     } else if (error.response?.status === 500) {
       toast.error('Server error. Please try again later.');
-    } else if (error.code === 'ECONNABORTED') {
-      toast.error('Request timeout. Please check your connection.');
-    } else if (!error.response) {
-      toast.error('Network error. Please check your internet connection.');
+    } else if (error.response?.status === 502) {
+      toast.error('Bad Gateway. The server is temporarily unavailable.');
+    } else if (error.response?.status === 503) {
+      toast.error('Service Unavailable. Please try again later.');
+    } else if (error.response?.status === 504) {
+      toast.error('Gateway Timeout. The server took too long to respond.');
     }
     
     // Create a simple error message
@@ -347,7 +368,8 @@ export const adminAPI = {
     console.log('🔍 adminAPI.getCommissionSettings called');
     try {
       // Commission routes are mounted directly, not under /api
-      const result = await axios.get('http://localhost:5000/admin/commission-settings', {
+      const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      const result = await axios.get(`${BASE_URL}/admin/commission-settings`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -364,7 +386,8 @@ export const adminAPI = {
     console.log('🔍 adminAPI.updateCommissionSettings called:', data);
     try {
       // Commission routes are mounted directly, not under /api
-      const result = await axios.put('http://localhost:5000/admin/commission-settings', data, {
+      const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      const result = await axios.put(`${BASE_URL}/admin/commission-settings`, data, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -381,7 +404,8 @@ export const adminAPI = {
     console.log('🔍 adminAPI.getCommissionAnalytics called');
     try {
       // Commission routes are mounted directly, not under /api
-      const result = await axios.get(`http://localhost:5000/admin/commission-analytics?period=${period}`, {
+      const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      const result = await axios.get(`${BASE_URL}/admin/commission-analytics?period=${period}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
