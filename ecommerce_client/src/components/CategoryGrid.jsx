@@ -86,7 +86,7 @@ const CategoryGrid = ({ categories = [] }) => {
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+    <div className="responsive-grid-2">
       {displayCategories.map((category) => (
         <div
           key={category.id}

@@ -57,29 +57,29 @@ const SearchBar = ({ onSearch, placeholder = "Search FastShop..." }) => {
   ];
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto">
+    <div className="relative w-full responsive-container">
       {/* Main Search Bar */}
       <form onSubmit={handleSearch} className="relative">
-        <div className="flex bg-white rounded-lg shadow-lg border-2 border-gray-200 focus-within:border-orange-400 transition-colors">
+        <div className="flex bg-white rounded-lg shadow-lg border-2 border-gray-200 focus-within:border-orange-400 transition-colors responsive-flex-row">
           {/* Category Dropdown */}
-          <div className="relative">
+          <div className="relative mobile-hide">
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-l-lg border-r border-gray-200 transition-colors min-w-[140px]"
+              className="flex items-center responsive-gap px-3 md:px-4 py-2 md:py-3 bg-gray-50 hover:bg-gray-100 rounded-l-lg border-r border-gray-200 transition-colors min-w-[100px] md:min-w-[140px]"
             >
-              <span className="text-lg">{selectedCategory.icon}</span>
-              <span className="text-sm font-medium text-gray-700 hidden sm:block">
+              <span className="text-base md:text-lg">{selectedCategory.icon}</span>
+              <span className="responsive-body-sm font-medium text-gray-700 hidden sm:block">
                 {selectedCategory.name.split(' ')[0]}
               </span>
-              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             {/* Category Dropdown Menu */}
             {isExpanded && (
-              <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <div className="absolute top-full left-0 mt-1 w-56 md:w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                 <div className="py-2">
                   {categories.map((category) => (
                     <button
@@ -89,11 +89,11 @@ const SearchBar = ({ onSearch, placeholder = "Search FastShop..." }) => {
                         setSelectedCategory(category);
                         setIsExpanded(false);
                       }}
-                      className={`w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors ${
+                      className={`w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors responsive-body-sm ${
                         selectedCategory.id === category.id ? 'bg-orange-50 text-orange-600' : 'text-gray-700'
                       }`}
                     >
-                      <span className="text-lg">{category.icon}</span>
+                      <span className="text-base md:text-lg">{category.icon}</span>
                       <span className="font-medium">{category.name}</span>
                     </button>
                   ))}
@@ -108,30 +108,30 @@ const SearchBar = ({ onSearch, placeholder = "Search FastShop..." }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 px-4 py-3 text-gray-700 bg-transparent focus:outline-none"
+            className="responsive-input flex-1 bg-transparent border-0 focus:ring-0"
           />
 
           {/* Search Button */}
           <button
             type="submit"
-            className="px-6 py-3 bg-orange-400 hover:bg-orange-500 text-white rounded-r-lg transition-colors flex items-center gap-2"
+            className="responsive-btn bg-orange-400 hover:bg-orange-500 text-white rounded-r-lg transition-colors flex items-center responsive-gap"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span className="hidden sm:block font-medium">Search</span>
+            <span className="hidden sm:block font-medium responsive-body-sm">Search</span>
           </button>
         </div>
       </form>
 
       {/* Popular Searches */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <span className="text-sm text-gray-600 font-medium">Popular:</span>
+      <div className="mt-3 md:mt-4 flex flex-wrap gap-2 mobile-hide">
+        <span className="responsive-body-sm text-gray-600 font-medium">Popular:</span>
         {popularSearches.slice(0, 6).map((search, index) => (
           <button
             key={index}
             onClick={() => handleQuickSearch(search)}
-            className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            className="responsive-body-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
           >
             {search}
           </button>

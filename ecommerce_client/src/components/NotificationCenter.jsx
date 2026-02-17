@@ -435,6 +435,7 @@ const NotificationCenter = () => {
           right: 0;
           margin-top: 8px;
           width: 400px;
+          max-width: 95vw;
           max-height: 600px;
           background: white;
           border-radius: 12px;
@@ -442,6 +443,50 @@ const NotificationCenter = () => {
           z-index: 1000;
           display: flex;
           flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+          .notification-dropdown {
+            width: 360px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .notification-dropdown {
+            width: 100vw;
+            max-width: 100vw;
+            right: -16px;
+            border-radius: 12px 12px 0 0;
+            max-height: 80vh;
+          }
+          
+          .notification-header {
+            padding: 12px 16px;
+          }
+          
+          .notification-title {
+            font-size: 16px;
+          }
+          
+          .notification-filters {
+            padding: 8px 16px;
+          }
+          
+          .notification-item {
+            padding: 12px 16px;
+          }
+          
+          .notification-icon {
+            font-size: 20px;
+          }
+          
+          .notification-item-title {
+            font-size: 13px;
+          }
+          
+          .notification-message {
+            font-size: 12px;
+          }
         }
 
         .notification-header {
@@ -659,8 +704,48 @@ const NotificationCenter = () => {
         @media (max-width: 480px) {
           .notification-dropdown {
             width: 100vw;
-            right: -20px;
+            max-width: 100vw;
+            right: -16px;
             border-radius: 12px 12px 0 0;
+            max-height: 80vh;
+          }
+          
+          .notification-header {
+            padding: 12px 16px;
+          }
+          
+          .notification-title {
+            font-size: 16px;
+          }
+          
+          .notification-filters {
+            padding: 8px 16px;
+          }
+          
+          .notification-item {
+            padding: 12px 16px;
+          }
+          
+          .notification-icon {
+            font-size: 20px;
+          }
+          
+          .notification-item-title {
+            font-size: 13px;
+          }
+          
+          .notification-message {
+            font-size: 12px;
+          }
+          
+          .mark-all-read-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+          }
+          
+          .filter-btn {
+            padding: 5px 10px;
+            font-size: 12px;
           }
         }
       `}</style>

@@ -72,19 +72,19 @@ const ProductGrid = ({ products = [], title = "Products", showFilters = false })
   return (
     <div className="w-full">
       {/* Header with Title and Filters */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div className="responsive-flex-col justify-between items-start md:items-center mb-6 responsive-gap">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">{title}</h2>
-          <p className="text-gray-600 mt-1">{products.length} products found</p>
+          <h2 className="responsive-heading-lg text-gray-800">{title}</h2>
+          <p className="text-gray-600 mt-1 responsive-body-sm">{products.length} products found</p>
         </div>
 
         {showFilters && (
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row responsive-gap w-full md:w-auto">
             {/* Sort Dropdown */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="responsive-select"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -97,7 +97,7 @@ const ProductGrid = ({ products = [], title = "Products", showFilters = false })
             <select
               value={priceRange}
               onChange={(e) => setPriceRange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="responsive-select"
             >
               {priceRanges.map((range) => (
                 <option key={range.value} value={range.value}>
@@ -117,8 +117,7 @@ const ProductGrid = ({ products = [], title = "Products", showFilters = false })
           <p className="text-gray-600">Try adjusting your search or filters</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
-          {products.map((product) => {
+        <div className="responsive-product-grid">{products.map((product) => {
             const discount = calculateDiscount(product.price, product.original_price);
             const rating = product.average_rating || product.rating || 0;
             const reviewCount = product.total_reviews || product.reviews_count || 0;
@@ -220,7 +219,7 @@ const ProductGrid = ({ products = [], title = "Products", showFilters = false })
       {/* Load More Button */}
       {products.length > 0 && (
         <div className="text-center mt-8">
-          <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-3 rounded-lg font-medium transition-colors">
+          <button className="responsive-btn bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors">
             Load More Products
           </button>
         </div>

@@ -60,7 +60,12 @@ const AdminLayout = () => {
         .menu-icon { font-size: 1.3em; width: 25px; text-align: center; }
         
         /* Main Content */
-        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; max-width: 100%; }
+        
+        /* Responsive utilities */
+        @media (min-width: 1280px) {
+          .main-content { padding: 30px; }
+        }
         
         /* Mobile Sidebar Overlay */
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }

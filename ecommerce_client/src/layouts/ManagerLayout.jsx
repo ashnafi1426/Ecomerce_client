@@ -31,20 +31,30 @@ const ManagerLayout = () => {
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; }
         .sidebar-overlay.show { display: block; }
         
+        /* Desktop styles */
+        .manager-sidebar { width: 256px; background: white; border-right: 1px solid #D5D9D9; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        
+        @media (min-width: 1280px) {
+          .main-content-wrapper { padding: 32px; }
+        }
+        
         @media (max-width: 1024px) {
           .user-avatar-desktop { display: none; }
           .logout-btn-text { display: none; }
+          .main-content-wrapper { padding: 20px; }
         }
         
         @media (max-width: 768px) {
           .mobile-menu-btn { display: block; }
           .manager-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; max-width: 85vw; z-index: 1000; transform: translateX(-100%); transition: transform 0.3s ease; height: 100vh; overflow-y: auto; }
           .manager-sidebar.show { transform: translateX(0); }
+          .main-content-wrapper { padding: 16px; }
         }
         
         @media (max-width: 480px) {
           .header-title { font-size: 1.2em; }
           .header-title-text { display: none; }
+          .main-content-wrapper { padding: 12px; }
         }
       `}</style>
 
@@ -273,7 +283,7 @@ const ManagerLayout = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-8">
+        <main className="flex-1 main-content-wrapper">
           <Outlet />
         </main>
       </div>
