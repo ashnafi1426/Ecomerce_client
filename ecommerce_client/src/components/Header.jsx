@@ -88,8 +88,15 @@ const Header = () => {
   ]
 
   return (
-    <header className="bg-gray-800 text-white relative z-[1000]">
+    <header className="bg-gray-800 text-white relative z-[1000] w-full">
       <style>{`
+        /* Amazon-Style Full-Width Header */
+        header {
+          width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        
         /* Amazon-Style Responsive Design - Mobile First */
         
         /* Base Mobile Styles (All Mobile Devices) */

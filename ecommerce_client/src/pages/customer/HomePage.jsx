@@ -392,10 +392,10 @@ const HomePage = () => {
   }
 
   return (
-    <div className="font-sans text-gray-900 leading-normal bg-gray-100 min-h-screen">
+    <div className="font-sans text-gray-900 leading-normal bg-gray-100 min-h-screen" style={{ margin: 0, padding: 0 }}>
       
-      {/* AMAZON-STYLE HERO CAROUSEL - RESPONSIVE */}
-      <section className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden mb-4 sm:mb-6 lg:mb-8 bg-gray-800">
+      {/* AMAZON-STYLE HERO CAROUSEL - FULL WIDTH EDGE-TO-EDGE */}
+      <section className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] overflow-hidden mb-0 bg-gray-800" style={{ marginLeft: 0, marginRight: 0, paddingLeft: 0, paddingRight: 0, marginBottom: 0 }}>
         {carouselSlides.map((slide, index) => (
           <div
             key={slide.id}
@@ -509,14 +509,16 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* MAIN CONTENT - RESPONSIVE */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        {/* CATEGORY SHOWCASE CARDS - RESPONSIVE */}
+      {/* MAIN CONTENT - AMAZON STYLE: Edge-to-edge with internal padding */}
+      <main style={{ marginLeft: 0, marginRight: 0, paddingLeft: 0, paddingRight: 0, maxWidth: '100%', width: '100%', backgroundColor: '#F7F8F8' }}>
+        
+        {/* CATEGORY SHOWCASE CARDS - RESPONSIVE - Full width section with centered content */}
         {categories.length > 0 && (
-          <div className="mb-6 sm:mb-8 lg:mb-12">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4 sm:mb-6 font-bold text-gray-900">
-              Shop by Category
-            </h2>
+          <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+            <div style={{ padding: '0 20px' }}>
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-4 sm:mb-6 font-bold text-gray-900">
+                Shop by Category
+              </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               {categories.map((category) => {
                 const categoryProductCount = allProducts.filter(p => p.category_id === category.id).length;
@@ -525,6 +527,7 @@ const HomePage = () => {
                   key={category.id}
                   onClick={() => handleCategoryFilter(category.id)}
                   className="bg-white p-4 sm:p-5 md:p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-1"
+                  style={{ border: '1px solid #E3E6E6' }}
                 >
                   <h3 className="text-base sm:text-lg md:text-xl mb-3 sm:mb-4 text-gray-900 font-semibold">
                     {getCategoryEmoji(category.name)} {category.name}
@@ -575,15 +578,17 @@ const HomePage = () => {
               );
             })}
           </div>
-          </div>
+            </div>
+          </section>
         )}
         
         {/* AMAZON-STYLE PRODUCT SECTIONS */}
         {!loading && selectedCategory === 'all' && (
           <>
-            {/* TODAY'S DEALS SECTION - MOBILE-FIRST RESPONSIVE */}
+            {/* TODAY'S DEALS SECTION - Full width with centered content */}
             {todaysDeals.length > 0 && (
-              <section className="mb-6 sm:mb-8 lg:mb-12">
+              <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+                <div style={{ padding: '0 20px' }}>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Today's Deals
@@ -595,7 +600,7 @@ const HomePage = () => {
                     See all deals →
                   </button>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md" style={{ border: '1px solid #E3E6E6' }}>
                   {todaysDeals.slice(0, visibleDeals).map((product) => {
                     const discount = calculateDiscount(product.price, product.original_price);
                     return (
@@ -685,18 +690,20 @@ const HomePage = () => {
                     </button>
                   </div>
                 )}
+                </div>
               </section>
             )}
 
-            {/* FEATURED PRODUCTS SECTION - MOBILE-FIRST RESPONSIVE */}
+            {/* FEATURED PRODUCTS SECTION - Full width with centered content */}
             {featuredProducts.length > 0 && (
-              <section className="mb-6 sm:mb-8 lg:mb-12">
+              <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+                <div style={{ padding: '0 20px' }}>
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Featured Products
                   </h2>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md" style={{ border: '1px solid #E3E6E6' }}>
                   {featuredProducts.map((product) => (
                     <div
                       key={product.id}
@@ -745,18 +752,20 @@ const HomePage = () => {
                     </div>
                   ))}
                 </div>
+                </div>
               </section>
             )}
 
-            {/* BEST SELLERS SECTION - MOBILE-FIRST RESPONSIVE */}
+            {/* BEST SELLERS SECTION - Full width with centered content */}
             {bestSellers.length > 0 && (
-              <section className="mb-6 sm:mb-8 lg:mb-12">
+              <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+                <div style={{ padding: '0 20px' }}>
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Best Sellers
                   </h2>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md" style={{ border: '1px solid #E3E6E6' }}>
                   {bestSellers.slice(0, visibleBestSellers).map((product, index) => (
                     <div
                       key={product.id}
@@ -838,18 +847,20 @@ const HomePage = () => {
                     </button>
                   </div>
                 )}
+                </div>
               </section>
             )}
 
-            {/* NEW ARRIVALS SECTION - MOBILE-FIRST RESPONSIVE */}
+            {/* NEW ARRIVALS SECTION - Full width with centered content */}
             {newArrivals.length > 0 && (
-              <section className="mb-6 sm:mb-8 lg:mb-12">
+              <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+                <div style={{ padding: '0 20px' }}>
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     New Arrivals
                   </h2>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md" style={{ border: '1px solid #E3E6E6' }}>
                   {newArrivals.slice(0, visibleNewArrivals).map((product) => (
                     <div
                       key={product.id}
@@ -923,18 +934,20 @@ const HomePage = () => {
                     </button>
                   </div>
                 )}
+                </div>
               </section>
             )}
 
-            {/* RECOMMENDED FOR YOU SECTION - MOBILE-FIRST RESPONSIVE */}
+            {/* RECOMMENDED FOR YOU SECTION - Full width with centered content */}
             {recommendedProducts.length > 0 && (
-              <section className="mb-6 sm:mb-8 lg:mb-12">
+              <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+                <div style={{ padding: '0 20px' }}>
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     Recommended for You
                   </h2>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md" style={{ border: '1px solid #E3E6E6' }}>
                   {recommendedProducts.slice(0, visibleRecommended).map((product) => (
                     <div
                       key={product.id}
@@ -1011,18 +1024,20 @@ const HomePage = () => {
                     </button>
                   </div>
                 )}
+                </div>
               </section>
             )}
 
-            {/* TRENDING NOW SECTION - MOBILE-FIRST RESPONSIVE */}
+            {/* TRENDING NOW SECTION - Full width with centered content */}
             {trendingProducts.length > 0 && (
-              <section className="mb-6 sm:mb-8 lg:mb-12">
+              <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+                <div style={{ padding: '0 20px' }}>
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                     🔥 Trending Now
                   </h2>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 bg-white p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg shadow-md" style={{ border: '1px solid #E3E6E6' }}>
                   {trendingProducts.slice(0, visibleTrending).map((product) => (
                     <div
                       key={product.id}
@@ -1104,14 +1119,16 @@ const HomePage = () => {
                     </button>
                   </div>
                 )}
+                </div>
               </section>
             )}
           </>
         )}
         
-        {/* FILTERED PRODUCTS */}
+        {/* FILTERED PRODUCTS - Full width with centered content */}
         {filteredProducts.length > 0 && (
-          <div id="products-section" className="px-2 sm:px-4 md:px-6">
+          <section id="products-section" style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '24px 0', marginBottom: '16px' }}>
+            <div style={{ padding: '0 20px' }}>
             {/* HEADER WITH TITLE AND CONTROLS */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-5 md:mb-6 gap-3 sm:gap-4">
               <div className="w-full sm:w-auto">
@@ -1221,12 +1238,15 @@ const HomePage = () => {
                 );
               })}
             </div>
-          </div>
+            </div>
+          </section>
         )}
 
-        {/* NO PRODUCTS MESSAGE */}
+        {/* NO PRODUCTS MESSAGE - Full width with centered content */}
         {!loading && filteredProducts.length === 0 && (
-          <div className="text-center py-10 sm:py-12 md:py-16 px-4 sm:px-6 bg-white rounded-lg shadow-md mx-2 sm:mx-4 md:mx-6">
+          <section style={{ width: '100%', backgroundColor: '#FFFFFF', padding: '48px 0', marginBottom: '16px' }}>
+            <div style={{ padding: '0 20px' }}>
+          <div className="text-center py-10 sm:py-12 md:py-16 px-4 sm:px-6 bg-white rounded-lg shadow-md" style={{ border: '1px solid #E3E6E6' }}>
             <div className="text-5xl sm:text-6xl md:text-7xl mb-4 sm:mb-6">📦</div>
             <h3 className="text-xl sm:text-2xl md:text-3xl mb-2 sm:mb-3 text-gray-900 font-semibold">
               {selectedCategory === 'all' ? 'No products available' : 'No products in this category'}
@@ -1245,6 +1265,8 @@ const HomePage = () => {
               </button>
             )}
           </div>
+            </div>
+          </section>
         )}
       </main>
 

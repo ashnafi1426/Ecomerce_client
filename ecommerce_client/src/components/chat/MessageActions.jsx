@@ -36,7 +36,11 @@ const MessageActions = ({
   return (
     <div
       ref={menuRef}
-      className="absolute right-0 top-full mt-1 z-50 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[160px]"
+      className="absolute top-8 z-50 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[160px]"
+      style={{
+        right: 'auto',
+        left: '0'
+      }}
     >
       {/* Reply */}
       <button

@@ -9,15 +9,45 @@
   --amazon-blue: #146EB4;
 }
 
-body {
-  margin: 0;
+/* ========================================
+   AMAZON-STYLE FULL-WIDTH LAYOUT
+   ======================================== */
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
   font-family: 'Amazon Ember', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 * {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
+}
+
+/* Remove any default container max-width */
+#root {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Force all main containers to be full-width */
+main {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+}
+
+/* Override Tailwind container */
+.container {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
 }
 
 /* Custom scrollbar */
@@ -57,9 +87,37 @@ body {
    RESPONSIVE DESIGN UTILITIES
    ======================================== */
 
-/* Responsive Container */
+/* Amazon-Style Section Structure */
+.amazon-section {
+  width: 100%;
+  padding: 40px 0;
+  background-color: #FFFFFF;
+}
+
+.amazon-section-content {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 768px) {
+  .amazon-section-content {
+    padding: 0 40px;
+  }
+}
+
+/* Responsive Container - Updated for full-width */
 .responsive-container {
-  @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  width: 100%;
+  padding: 0 16px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    padding: 0 40px;
+  }
 }
 
 /* Responsive Grid Layouts */

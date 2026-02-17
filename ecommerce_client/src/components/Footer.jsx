@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white responsive-padding-y mt-auto">
-      <div className="responsive-container">
+    <footer className="bg-gray-800 text-white mt-auto" style={{ width: '100%', margin: 0, padding: 0 }}>
+      <div style={{ maxWidth: '1500px', margin: '0 auto', padding: '40px 16px' }}>
         <div className="responsive-grid">
           <div>
             <h3 className="responsive-heading-sm mb-4">Get to Know Us</h3>

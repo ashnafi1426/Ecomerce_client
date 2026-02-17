@@ -20,6 +20,7 @@ import ReplyPreview from './ReplyPreview';
 import EditedIndicator from './EditedIndicator';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import EditHistoryModal from './EditHistoryModal';
+import './MessageThread.css';
 
 // Memoized Message Bubble Component - prevents re-renders of existing messages
 const MessageBubble = memo(({ 
@@ -45,32 +46,10 @@ const MessageBubble = memo(({
 
   return (
     <div
-      className={isOwnMessage ? 'message-own' : 'message-other'}
-      style={{ 
-        width: '100%',
-        marginBottom: '4px',
-        display: 'flex',
-        justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
-        alignItems: 'flex-start'
-      }}
+      className={`message-wrapper ${isOwnMessage ? 'sent' : 'received'}`}
     >
       <div
-        className={`rounded-lg p-3 relative group ${
-          isOwnMessage
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-100 text-gray-900'
-        }`}
-        style={{
-          maxWidth: '70%',
-          wordWrap: 'break-word',
-          overflowWrap: 'break-word',
-          whiteSpace: 'pre-wrap',
-          minWidth: '60px',
-          textAlign: 'left',
-          position: 'relative'
-        }}
-        onMouseEnter={() => !isDeleted && setShowActionsFor(message.id)}
-        onMouseLeave={() => setShowActionsFor(null)}
+        className={`message-bubble ${isOwnMessage ? 'sent' : 'received'} ${isDeleted ? 'deleted' : ''} relative group`}
       >
         {/* Reply Context */}
         {message.reply_to && (
@@ -142,9 +121,40 @@ const MessageBubble = memo(({
           )}
         </div>
 
-        {/* Message Actions Menu */}
+        {/* Message Actions Menu - Always Visible Three-Dot Button */}
+        {!isDeleted && (
+          <button
+            onClick={() => setShowActionsFor(showActionsFor === message.id ? null : message.id)}
+            className="message-actions-trigger"
+            title="Message actions"
+            style={{
+              position: 'absolute',
+              top: '4px',
+              right: isOwnMessage ? 'auto' : '-36px',
+              left: isOwnMessage ? '-36px' : 'auto',
+              padding: '6px',
+              background: 'white',
+              border: '1px solid #e5e7eb',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              zIndex: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '28px',
+              height: '28px'
+            }}
+          >
+            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+            </svg>
+          </button>
+        )}
+        
+        {/* Message Actions Dropdown */}
         {!isDeleted && showActionsFor === message.id && (
-          <div className="absolute top-0 right-0 transform translate-x-full ml-2">
+          <div style={{ position: 'absolute', top: '0', right: isOwnMessage ? 'auto' : '-36px', left: isOwnMessage ? '-36px' : 'auto', zIndex: 20 }}>
             <MessageActions
               message={message}
               isOwnMessage={isOwnMessage}
@@ -191,6 +201,7 @@ const MessageThread = ({ conversation }) => {
   const { user } = useSelector((state) => state.auth);
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
+  const previousMessageCountRef = useRef(0);
   
   // Memoize messages array to prevent unnecessary re-renders
   const conversationMessages = useMemo(() => {
@@ -204,6 +215,7 @@ const MessageThread = ({ conversation }) => {
   const [replyToMessage, setReplyToMessage] = useState(null);
   const [deleteConfirmModal, setDeleteConfirmModal] = useState({ isOpen: false, message: null });
   const [editHistoryModal, setEditHistoryModal] = useState({ isOpen: false, messageId: null, currentText: '' });
+  const [newMessageIds, setNewMessageIds] = useState(new Set());
 
   useEffect(() => {
     if (conversation?.id) {
@@ -212,13 +224,37 @@ const MessageThread = ({ conversation }) => {
     }
   }, [conversation?.id, fetchMessages, markAsRead]);
 
+  // Smooth scroll to bottom when new messages arrive
   useEffect(() => {
-    // Scroll to bottom instantly using useLayoutEffect timing
-    if (containerRef.current) {
-      // Direct scroll without any animation or delay
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    const currentCount = conversationMessages.length;
+    const previousCount = previousMessageCountRef.current;
+
+    if (currentCount > previousCount) {
+      // New message(s) added - mark them for animation
+      const newIds = new Set();
+      for (let i = previousCount; i < currentCount; i++) {
+        if (conversationMessages[i]) {
+          newIds.add(conversationMessages[i].id);
+        }
+      }
+      setNewMessageIds(newIds);
+
+      // Smooth scroll to bottom
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'end'
+        });
+      }
+
+      // Remove animation class after animation completes
+      setTimeout(() => {
+        setNewMessageIds(new Set());
+      }, 300);
     }
-  }, [conversationMessages.length]); // Only trigger on message count change
+
+    previousMessageCountRef.current = currentCount;
+  }, [conversationMessages]);
 
   const formatTime = (timestamp) => {
     if (!timestamp) return '';
@@ -289,36 +325,10 @@ const MessageThread = ({ conversation }) => {
 
   return (
     <div className="h-full flex flex-col min-h-0" style={{ margin: 0, padding: 0 }}>
-      {/* Force disable all transitions globally for chat messages */}
-      <style>{`
-        .message-own, .message-other, .message-own *, .message-other * {
-          transition: none !important;
-          animation: none !important;
-          transform: none !important;
-        }
-        /* Disable React's default layout animations */
-        .message-own, .message-other {
-          contain: layout style paint;
-        }
-      `}</style>
-      
       {/* Messages */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto min-h-0"
-        style={{ 
-          padding: '12px',
-          paddingTop: '8px',
-          paddingBottom: '8px',
-          marginTop: 0,
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          scrollBehavior: 'auto',
-          transition: 'none',
-          willChange: 'auto'
-        }}
+        className="message-thread-container flex-1 overflow-y-auto min-h-0"
       >
         {conversationMessages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500">
@@ -327,27 +337,32 @@ const MessageThread = ({ conversation }) => {
         ) : (
           conversationMessages.map((message) => {
             const isOwnMessage = message.sender_id === user?.id;
+            const isNewMessage = newMessageIds.has(message.id);
 
             return (
-              <MessageBubble
+              <div
                 key={message.id}
-                message={message}
-                isOwnMessage={isOwnMessage}
-                user={user}
-                conversation={conversation}
-                formatTime={formatTime}
-                showActionsFor={showActionsFor}
-                setShowActionsFor={setShowActionsFor}
-                showEmojiPickerFor={showEmojiPickerFor}
-                setShowEmojiPickerFor={setShowEmojiPickerFor}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                handleReply={handleReply}
-                handleReact={handleReact}
-                handleEmojiSelect={handleEmojiSelect}
-                handleRemoveReaction={handleRemoveReaction}
-                handleViewHistory={handleViewHistory}
-              />
+                className={`message-wrapper ${isOwnMessage ? 'sent' : 'received'} ${isNewMessage ? 'animate' : ''}`}
+              >
+                <MessageBubble
+                  message={message}
+                  isOwnMessage={isOwnMessage}
+                  user={user}
+                  conversation={conversation}
+                  formatTime={formatTime}
+                  showActionsFor={showActionsFor}
+                  setShowActionsFor={setShowActionsFor}
+                  showEmojiPickerFor={showEmojiPickerFor}
+                  setShowEmojiPickerFor={setShowEmojiPickerFor}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                  handleReply={handleReply}
+                  handleReact={handleReact}
+                  handleEmojiSelect={handleEmojiSelect}
+                  handleRemoveReaction={handleRemoveReaction}
+                  handleViewHistory={handleViewHistory}
+                />
+              </div>
             );
           })
         )}
