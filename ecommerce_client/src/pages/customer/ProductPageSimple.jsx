@@ -59,6 +59,20 @@ const ProductPageSimple = () => {
   }, [id, isAuthenticated])
 
   const handleAddToCart = async () => {
+    // Check if user is logged in
+    if (!isAuthenticated) {
+      toast.error('Please login to add items to cart', {
+        duration: 3000,
+        style: {
+          background: '#DC2626',
+          color: '#fff',
+        }
+      })
+      // Redirect to login page
+      navigate('/login', { state: { from: `/product/${id}` } })
+      return
+    }
+
     setAddingToCart(true)
     
     try {
@@ -89,6 +103,20 @@ const ProductPageSimple = () => {
   }
 
   const handleBuyNow = async () => {
+    // Check if user is logged in
+    if (!isAuthenticated) {
+      toast.error('Please login to proceed with purchase', {
+        duration: 3000,
+        style: {
+          background: '#DC2626',
+          color: '#fff',
+        }
+      })
+      // Redirect to login page
+      navigate('/login', { state: { from: `/product/${id}` } })
+      return
+    }
+
     setAddingToCart(true)
     
     try {
@@ -174,31 +202,63 @@ const ProductPageSimple = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_400px] gap-8">
           
           {/* IMAGE GALLERY */}
-          <div className="flex gap-4">
-            {/* Thumbnails */}
-            <div className="flex flex-col gap-2">
+          <div className="flex gap-4 max-md:flex-col-reverse">
+            {/* Thumbnails - Vertical on desktop, Horizontal on mobile */}
+            <div className="flex flex-col gap-2 max-md:flex-row max-md:overflow-x-auto">
               {images.map((img, idx) => (
                 <div
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`w-16 h-16 border-2 rounded cursor-pointer flex items-center justify-center overflow-hidden ${
-                    selectedImage === idx ? 'border-orange-500' : 'border-gray-300 hover:border-orange-400'
+                  className={`w-[150px] h-[150px] max-lg:w-[120px] max-lg:h-[120px] max-md:w-[60px] max-md:h-[60px] max-sm:w-[40px] max-sm:h-[40px] border-2 rounded cursor-pointer flex items-center justify-center overflow-hidden transition-all ${
+                    selectedImage === idx ? 'border-orange-500 shadow-md' : 'border-gray-300 hover:border-orange-400 hover:scale-105'
                   }`}
                 >
-                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
+                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain p-0.5" />
                 </div>
               ))}
             </div>
             
-            {/* Main Image */}
-            <div className="flex-1 border border-gray-300 rounded flex items-center justify-center bg-white" style={{ minHeight: '500px' }}>
+            {/* Main Image - Portrait orientation with responsive breakpoints */}
+            <div className="flex-1 border border-gray-300 rounded flex items-center justify-center bg-white p-5 max-md:p-2.5" style={{ 
+              width: '800px', 
+              height: '1000px',
+              maxWidth: '100%'
+            }}>
               <img 
                 src={images[selectedImage]} 
                 alt={product.title || product.name}
-                className="max-w-full max-h-[500px] object-contain"
+                className="max-w-full max-h-full w-auto h-auto object-contain"
               />
             </div>
           </div>
+          
+          {/* Responsive styles for different screen sizes */}
+          <style jsx>{`
+            @media (max-width: 1200px) {
+              .flex-1 {
+                width: 700px;
+                height: 875px;
+              }
+            }
+            @media (max-width: 992px) {
+              .flex-1 {
+                width: 640px;
+                height: 800px;
+              }
+            }
+            @media (max-width: 768px) {
+              .flex-1 {
+                width: 100%;
+                height: 600px;
+              }
+            }
+            @media (max-width: 480px) {
+              .flex-1 {
+                width: 100%;
+                height: 400px;
+              }
+            }
+          `}</style>
 
           {/* PRODUCT INFO */}
           <div className="px-5">

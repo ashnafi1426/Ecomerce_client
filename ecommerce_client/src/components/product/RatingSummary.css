@@ -1,0 +1,104 @@
+/* RatingSummary.css - Matches product.html exactly */
+
+.review-summary {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #F7F8F8;
+  border-radius: 8px;
+}
+
+.average-rating {
+  text-align: center;
+}
+
+.average-rating-number {
+  font-size: 3em;
+  font-weight: 700;
+  color: #0F1111;
+}
+
+.average-rating .stars {
+  color: #FF9900;
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.average-rating div:last-child {
+  font-size: 0.9em;
+  color: #565959;
+}
+
+.rating-bars {
+  flex: 1;
+}
+
+.rating-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+}
+
+.bar-label {
+  width: 60px;
+  font-size: 0.9em;
+  color: #0F1111;
+}
+
+.bar {
+  flex: 1;
+  height: 20px;
+  background-color: #D5D9D9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background-color: #FF9900;
+  transition: width 0.3s ease;
+}
+
+.bar-percentage {
+  width: 40px;
+  text-align: right;
+  font-size: 0.9em;
+  color: #565959;
+}
+
+.no-ratings {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-ratings p {
+  font-size: 1.1em;
+  color: #565959;
+  margin-bottom: 20px;
+}
+
+.write-review-btn {
+  background-color: #FFD814;
+  border: 1px solid #FCD200;
+  border-radius: 8px;
+  padding: 10px 30px;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #0F1111;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.write-review-btn:hover {
+  background-color: #F7CA00;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .review-summary {
+    flex-direction: column;
+    gap: 20px;
+  }
+}

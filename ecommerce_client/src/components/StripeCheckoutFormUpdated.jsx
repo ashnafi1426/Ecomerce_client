@@ -6,7 +6,8 @@ import {
   useStripe,
   useElements
 } from '@stripe/react-stripe-js';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearCart } from '../store/slices/cartSlice';
 import { toast } from 'react-hot-toast';
 import api from '../config/api';
 
@@ -30,6 +31,7 @@ const CheckoutForm = ({ cartItems, shippingAddress, onPaymentSuccess, onPaymentE
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentIntent, setPaymentIntent] = useState(null);
@@ -181,6 +183,10 @@ const CheckoutForm = ({ cartItems, shippingAddress, onPaymentSuccess, onPaymentE
         console.log('[Order Creation] Order created successfully!');
         console.log(`[Order Creation] Order ID: ${response.order_id}`);
         
+        // Clear cart immediately after successful order creation
+        console.log('[Order Creation] Clearing cart...');
+        dispatch(clearCart());
+        
         const splitResult = response.split_result;
         if (splitResult && splitResult.success) {
           console.log(`[Order Creation] Multi-vendor splitting: ${splitResult.sellers_count} sellers`);
@@ -324,7 +330,7 @@ const CheckoutForm = ({ cartItems, shippingAddress, onPaymentSuccess, onPaymentE
         </div>
       </form>
 
-      <style jsx>{`
+      <style>{`
         .stripe-checkout-form {
           max-width: 500px;
           margin: 0 auto;

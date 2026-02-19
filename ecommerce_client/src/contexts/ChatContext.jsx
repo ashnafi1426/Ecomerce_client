@@ -384,12 +384,13 @@ export const ChatProvider = ({ children }) => {
   // ============================================
   // INITIAL DATA FETCH
   // ============================================
-  useEffect(() => {
-    if (isConnected) {
-      fetchConversations();
-      fetchUnreadCount();
-    }
-  }, [isConnected, fetchConversations, fetchUnreadCount]);
+  // DISABLED: Automatic chat polling removed
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     fetchConversations();
+  //     fetchUnreadCount();
+  //   }
+  // }, [isConnected, fetchConversations, fetchUnreadCount]);
 
   // ============================================
   // TELEGRAM FEATURES - PHASE 2.1

@@ -367,14 +367,7 @@ export const adminAPI = {
   getCommissionSettings: async () => {
     console.log('🔍 adminAPI.getCommissionSettings called');
     try {
-      // Commission routes are mounted directly, not under /api
-      const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-      const result = await axios.get(`${BASE_URL}/admin/commission-settings`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const result = await api.get('/admin/commission-settings');
       console.log('✅ adminAPI.getCommissionSettings success:', result.data);
       return result.data;
     } catch (error) {
@@ -385,14 +378,7 @@ export const adminAPI = {
   updateCommissionSettings: async (data) => {
     console.log('🔍 adminAPI.updateCommissionSettings called:', data);
     try {
-      // Commission routes are mounted directly, not under /api
-      const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-      const result = await axios.put(`${BASE_URL}/admin/commission-settings`, data, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const result = await api.put('/admin/commission-settings', data);
       console.log('✅ adminAPI.updateCommissionSettings success:', result.data);
       return result.data;
     } catch (error) {
@@ -403,14 +389,7 @@ export const adminAPI = {
   getCommissionAnalytics: async (period = '30days') => {
     console.log('🔍 adminAPI.getCommissionAnalytics called');
     try {
-      // Commission routes are mounted directly, not under /api
-      const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-      const result = await axios.get(`${BASE_URL}/admin/commission-analytics?period=${period}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const result = await api.get(`/admin/commission-analytics?period=${period}`);
       console.log('✅ adminAPI.getCommissionAnalytics success:', result.data);
       return result.data;
     } catch (error) {

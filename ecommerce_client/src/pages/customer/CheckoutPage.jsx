@@ -177,29 +177,37 @@ const CheckoutPage = () => {
     }
   }
 
-  const handlePaymentSuccess = async (paymentIntent) => {
+  const handlePaymentSuccess = async (paymentData) => {
     setLoading(true)
     
     try {
-      // Create order after payment success
-      const response = await api.post('/stripe/create-order', {
-        payment_intent_id: paymentIntent.id
-      })
-
+      // Payment and order already created in StripeCheckoutFormUpdated
+      // Just clear cart and navigate
+      console.log('Payment successful, clearing cart...')
+      
+      // Clear cart immediately after successful payment
       dispatch(clearCart())
+      
       toast.success('Order placed successfully!')
       
-      // Navigate to orders list page instead of order detail
-      // This ensures the user sees their new order in the list
+      // Navigate to orders list page
       navigate('/orders', { 
         state: { 
-          newOrderId: response.order_id,
+          newOrderId: paymentData.orderId,
           showSuccess: true 
         } 
       })
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to create order')
-      console.error('Order creation error:', error)
+      console.error('Post-payment error:', error)
+      toast.error('Order created but navigation failed. Check your orders page.')
+      
+      // Still clear cart even if navigation fails
+      dispatch(clearCart())
+      
+      // Try to navigate anyway
+      setTimeout(() => {
+        navigate('/orders')
+      }, 2000)
     } finally {
       setLoading(false)
     }

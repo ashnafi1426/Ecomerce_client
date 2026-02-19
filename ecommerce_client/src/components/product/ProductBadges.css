@@ -1,0 +1,79 @@
+.product-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.badge-icon {
+  font-size: 16px;
+}
+
+.badge-text {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Badge Type Styles */
+.badge-best-seller {
+  background: linear-gradient(135deg, #ff9900 0%, #ff6600 100%);
+}
+
+.badge-amazons-choice {
+  background: linear-gradient(135deg, #232f3e 0%, #131921 100%);
+}
+
+.badge-deal-of-day {
+  background: linear-gradient(135deg, #c7511f 0%, #a33e1a 100%);
+  animation: pulse 2s infinite;
+}
+
+.badge-lightning-deal {
+  background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+  animation: pulse 2s infinite;
+}
+
+.badge-new-arrival {
+  background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);
+}
+
+.badge-limited-time {
+  background: linear-gradient(135deg, #ee5a6f 0%, #d63447 100%);
+  animation: pulse 2s infinite;
+}
+
+/* Pulse Animation for Time-Sensitive Badges */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .badge {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .badge-icon {
+    font-size: 14px;
+  }
+}

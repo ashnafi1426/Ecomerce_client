@@ -118,7 +118,7 @@ const AdminLayout = () => {
         </div>
         <div className="user-menu">
           <NotificationCenter />
-          <div className="user-info">
+          <div className="user-info" onClick={() => navigate('/admin/profile')}>
             <div className="user-avatar">👤</div>
             <div>
               <div style={{ fontSize: '0.85em' }}>Administrator</div>
@@ -234,6 +234,11 @@ const AdminLayout = () => {
           <div className="sidebar-section">
             <div className="sidebar-section-title">System</div>
             <ul className="sidebar-menu">
+              <li>
+                <Link to="/admin/profile" className={isActive('/admin/profile') ? 'active' : ''} onClick={closeMobileSidebar}>
+                  <span className="menu-icon">👤</span> My Profile
+                </Link>
+              </li>
               <li>
                 <Link to="/admin/settings" className={isActive('/admin/settings') ? 'active' : ''} onClick={closeMobileSidebar}>
                   <span className="menu-icon">⚙️</span> Settings

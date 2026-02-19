@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { adminAPI } from '../../services/api.service';
 
 const AdminCommissionSettingsPage = () => {
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  
   const [settings, setSettings] = useState({
     default_rate: 15.00,
     category_rates: {},
@@ -36,10 +41,17 @@ const AdminCommissionSettingsPage = () => {
   });
 
   useEffect(() => {
-    fetchCommissionSettings();
-    fetchCategories();
-    fetchStats();
-  }, []);
+    // Only fetch data if user is admin or manager
+    if (user && (user.role === 'admin' || user.role === 'manager')) {
+      fetchCommissionSettings();
+      fetchCategories();
+      fetchStats();
+    } else if (user && user.role !== 'admin' && user.role !== 'manager') {
+      // Redirect non-admin/manager users
+      toast.error('Access denied. Admin or Manager role required.');
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const fetchCommissionSettings = async () => {
     try {
