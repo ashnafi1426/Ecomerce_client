@@ -185,6 +185,19 @@ const AdminDashboardPage = () => {
     activeSellers: 0,
     totalCustomers: 0
   })
+  const [replacementSummary, setReplacementSummary] = useState({
+    pendingCount: 0,
+    totalRequests: 0,
+    approvalRate: 0,
+    avgProcessingTime: 0
+  })
+  const [refundSummary, setRefundSummary] = useState({
+    pendingCount: 0,
+    totalRequests: 0,
+    approvalRate: 0,
+    avgProcessingTime: 0,
+    totalRefundAmount: 0
+  })
   const [pendingApprovals, setPendingApprovals] = useState([])
   const [recentActivity, setRecentActivity] = useState([])
   const [loading, setLoading] = useState(true)
@@ -226,6 +239,17 @@ const AdminDashboardPage = () => {
           activeSellers: 0,
           totalCustomers: 0
         });
+      }
+      
+      // Set replacement and refund summaries
+      if (data.replacementSummary) {
+        console.log('✅ Setting replacement summary:', data.replacementSummary);
+        setReplacementSummary(data.replacementSummary);
+      }
+      
+      if (data.refundSummary) {
+        console.log('✅ Setting refund summary:', data.refundSummary);
+        setRefundSummary(data.refundSummary);
       }
       
       // Set pending approvals if available
@@ -400,6 +424,79 @@ const AdminDashboardPage = () => {
               <div className="stat-change positive">↑ 23.1% <span style={{ color: '#565959' }}>vs last month</span></div>
             </div>
             <div className="stat-icon">👥</div>
+          </div>
+        </div>
+      </div>
+
+      {/* REPLACEMENT & REFUND SUMMARY */}
+      <div className="section">
+        <div className="section-header">
+          <h2 className="section-title">Replacement & Refund Summary</h2>
+        </div>
+        <div className="stats-grid" style={{ marginBottom: 0 }}>
+          <div className="stat-card">
+            <div className="stat-header">
+              <div>
+                <div className="stat-label">Pending Replacements</div>
+                <div className="stat-value">{replacementSummary.pendingCount}</div>
+                <div style={{ fontSize: '0.85em', color: '#565959', marginTop: '5px' }}>
+                  Total: {replacementSummary.totalRequests} requests
+                </div>
+              </div>
+              <div className="stat-icon">🔄</div>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-header">
+              <div>
+                <div className="stat-label">Replacement Approval Rate</div>
+                <div className="stat-value">{replacementSummary.approvalRate}%</div>
+                <div style={{ fontSize: '0.85em', color: '#565959', marginTop: '5px' }}>
+                  Avg processing: {replacementSummary.avgProcessingTime}h
+                </div>
+              </div>
+              <div className="stat-icon">✅</div>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-header">
+              <div>
+                <div className="stat-label">Pending Refunds</div>
+                <div className="stat-value">{refundSummary.pendingCount}</div>
+                <div style={{ fontSize: '0.85em', color: '#565959', marginTop: '5px' }}>
+                  Total: {refundSummary.totalRequests} requests
+                </div>
+              </div>
+              <div className="stat-icon">💸</div>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-header">
+              <div>
+                <div className="stat-label">Refund Approval Rate</div>
+                <div className="stat-value">{refundSummary.approvalRate}%</div>
+                <div style={{ fontSize: '0.85em', color: '#565959', marginTop: '5px' }}>
+                  Avg processing: {refundSummary.avgProcessingTime}h
+                </div>
+              </div>
+              <div className="stat-icon">📊</div>
+            </div>
+          </div>
+
+          <div className="stat-card" style={{ gridColumn: 'span 2' }}>
+            <div className="stat-header">
+              <div>
+                <div className="stat-label">Total Refund Amount</div>
+                <div className="stat-value">${refundSummary.totalRefundAmount?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div style={{ fontSize: '0.85em', color: '#565959', marginTop: '5px' }}>
+                  Completed refunds only
+                </div>
+              </div>
+              <div className="stat-icon">💵</div>
+            </div>
           </div>
         </div>
       </div>

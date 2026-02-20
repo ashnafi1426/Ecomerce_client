@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { customerAPI } from '../../services/api.service'
+import OrderListView from '../../components/order/OrderListView'
+import OrderFilters from '../../components/order/OrderFilters'
+import useInfiniteScroll from '../../hooks/useInfiniteScroll'
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([])
@@ -11,6 +14,7 @@ const OrdersPage = () => {
   const [dateRange, setDateRange] = useState('all')
   const [cancellingOrder, setCancellingOrder] = useState(null)
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchOrders()
@@ -171,44 +175,46 @@ const OrdersPage = () => {
     return descriptions[status] || 'Order status'
   }
 
-  // Filter orders based on search term, status, and date range
-  const filteredOrders = orders.filter(order => {
-    // Status filter
-    const statusMatch = filter === 'all' || order.status === filter
-    
-    // Search filter
-    const searchMatch = !searchTerm || 
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.items?.some(item => 
-        item.product?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.product?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.title?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    
-    // Date range filter
-    let dateMatch = true
-    if (dateRange !== 'all') {
-      const orderDate = new Date(order.created_at)
-      const now = new Date()
+  // Filter orders based on search term, status, and date range - memoized to prevent infinite loop
+  const filteredOrders = useMemo(() => {
+    return orders.filter(order => {
+      // Status filter
+      const statusMatch = filter === 'all' || order.status === filter
       
-      switch (dateRange) {
-        case 'last30':
-          dateMatch = (now - orderDate) <= (30 * 24 * 60 * 60 * 1000)
-          break
-        case 'last90':
-          dateMatch = (now - orderDate) <= (90 * 24 * 60 * 60 * 1000)
-          break
-        case 'thisYear':
-          dateMatch = orderDate.getFullYear() === now.getFullYear()
-          break
-        default:
-          dateMatch = true
+      // Search filter
+      const searchMatch = !searchTerm || 
+        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.items?.some(item => 
+          item.product?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.product?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.title?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      
+      // Date range filter
+      let dateMatch = true
+      if (dateRange !== 'all') {
+        const orderDate = new Date(order.created_at)
+        const now = new Date()
+        
+        switch (dateRange) {
+          case 'last30':
+            dateMatch = (now - orderDate) <= (30 * 24 * 60 * 60 * 1000)
+            break
+          case 'last90':
+            dateMatch = (now - orderDate) <= (90 * 24 * 60 * 60 * 1000)
+            break
+          case 'thisYear':
+            dateMatch = orderDate.getFullYear() === now.getFullYear()
+            break
+          default:
+            dateMatch = true
+        }
       }
-    }
-    
-    return statusMatch && searchMatch && dateMatch
-  })
+      
+      return statusMatch && searchMatch && dateMatch
+    })
+  }, [orders, filter, searchTerm, dateRange])
 
   // Get order counts for each status
   const getOrderCounts = () => {
@@ -285,6 +291,14 @@ const OrdersPage = () => {
 
   const orderCounts = getOrderCounts()
 
+  // Infinite scroll for pagination - Requirement 9.7
+  const { displayedItems, hasMore, observerTarget } = useInfiniteScroll(filteredOrders, 20)
+
+  // Handle order click navigation
+  const handleOrderClick = (orderId) => {
+    navigate(`/orders/${orderId}`)
+  }
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="max-w-[1200px] mx-auto px-5 py-8">
@@ -342,43 +356,14 @@ const OrdersPage = () => {
           </div>
         </div>
 
-        {/* Filter Tabs with Counts */}
-        <div className="bg-white rounded-lg shadow-sm mb-6">
-          <div className="flex border-b overflow-x-auto">
-            {[
-              { key: 'all', label: 'All' },
-              { key: 'pending_payment', label: 'Pending Payment' },
-              { key: 'paid', label: 'Paid' },
-              { key: 'confirmed', label: 'Confirmed' },
-              { key: 'packed', label: 'Packed' },
-              { key: 'shipped', label: 'Shipped' },
-              { key: 'delivered', label: 'Delivered' },
-              { key: 'cancelled', label: 'Cancelled' },
-              { key: 'refunded', label: 'Refunded' }
-            ].map((status) => (
-              <button
-                key={status.key}
-                onClick={() => setFilter(status.key)}
-                className={`px-6 py-4 font-semibold whitespace-nowrap transition-colors flex items-center gap-2 ${
-                  filter === status.key
-                    ? 'border-b-2 border-[#FF9900] text-[#FF9900]'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <span>{status.label}</span>
-                {orderCounts[status.key] > 0 && (
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    filter === status.key
-                      ? 'bg-[#FF9900] text-white'
-                      : 'bg-gray-200 text-gray-600'
-                  }`}>
-                    {orderCounts[status.key]}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* Filter Tabs with Counts - Using OrderFilters Component */}
+        <OrderFilters
+          currentFilter={filter}
+          onFilterChange={setFilter}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          orderCounts={orderCounts}
+        />
 
         {loading ? (
           <div className="text-center py-20">
@@ -440,12 +425,12 @@ const OrdersPage = () => {
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div>
             {/* Results Summary */}
-            <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
               <div className="flex justify-between items-center">
                 <p className="text-gray-600">
-                  Showing {filteredOrders.length} of {orders.length} orders
+                  Showing {displayedItems.length} of {filteredOrders.length} orders
                   {searchTerm && ` matching "${searchTerm}"`}
                   {dateRange !== 'all' && ` from ${dateRange.replace('last', 'last ').replace('thisYear', 'this year')}`}
                 </p>
@@ -464,161 +449,26 @@ const OrdersPage = () => {
               </div>
             </div>
 
-            {/* Orders List */}
-            {filteredOrders.map((order) => (
-              <div key={order.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                {/* Order Header */}
-                <div className="bg-gray-50 px-6 py-4 border-b grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div>
-                    <div className="text-xs text-gray-600 uppercase">Order Placed</div>
-                    <div className="font-semibold">{new Date(order.created_at).toLocaleDateString()}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-600 uppercase">Total</div>
-                    <div className="font-semibold">${order.total?.toFixed(2)}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-600 uppercase">Ship To</div>
-                    <div className="font-semibold">{order.shipping_address?.fullName || 'N/A'}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-gray-600 uppercase mb-1">Order # {order.order_number || order.id}</div>
-                    <Link
-                      to={`/orders/${order.id}`}
-                      className="text-amazon-blue hover:text-[#C7511F] hover:underline text-sm font-semibold"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
+            {/* Orders List - Using OrderListView Component */}
+            <OrderListView
+              orders={displayedItems}
+              onOrderClick={handleOrderClick}
+              loading={false}
+            />
 
-                {/* Order Items */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold">
-                      {order.status === 'delivered' ? 'Delivered' : 
-                       order.status === 'shipped' ? 'On the way' :
-                       order.status === 'packed' ? 'Packed and ready to ship' :
-                       order.status === 'confirmed' ? 'Order confirmed' :
-                       order.status === 'paid' ? 'Payment received' :
-                       order.status === 'pending_payment' ? 'Awaiting payment' :
-                       order.status === 'cancelled' ? 'Cancelled' : 
-                       order.status === 'refunded' ? 'Refunded' : 'Processing'}
-                    </h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
-                      {getStatusDisplayName(order.status)}
-                    </span>
-                  </div>
-
-                  <div className="space-y-4">
-                    {order.items?.slice(0, 3).map((item, index) => (
-                      <div key={index} className="flex gap-4">
-                        {item.product?.image_url && item.product.image_url.startsWith('http') ? (
-                          <img
-                            src={item.product.image_url}
-                            alt={item.product?.title || item.product?.name || item.title}
-                            className="w-24 h-24 object-cover rounded border"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f3f4f6" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E📦%3C/text%3E%3C/svg%3E';
-                            }}
-                          />
-                        ) : item.product?.image && item.product.image.startsWith('http') ? (
-                          <img
-                            src={item.product.image}
-                            alt={item.product?.title || item.product?.name || item.title}
-                            className="w-24 h-24 object-cover rounded border"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f3f4f6" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E📦%3C/text%3E%3C/svg%3E';
-                            }}
-                          />
-                        ) : item.image_url && item.image_url.startsWith('http') ? (
-                          <img
-                            src={item.image_url}
-                            alt={item.product?.title || item.product?.name || item.title}
-                            className="w-24 h-24 object-cover rounded border"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f3f4f6" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="40"%3E📦%3C/text%3E%3C/svg%3E';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-4xl rounded border">
-                            📦
-                          </div>
-                        )}
-                        <div className="flex-1">
-                          <Link
-                            to={`/product/${item.product_id}`}
-                            className="font-semibold hover:text-amazon-orange line-clamp-2"
-                          >
-                            {item.product?.title || item.product?.name || item.title || 'Product'}
-                          </Link>
-                          <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
-                          <p className="text-sm font-bold mt-1">${(item.price * item.quantity)?.toFixed(2)}</p>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Link
-                            to={`/product/${item.product_id}`}
-                            className="px-4 py-2 border border-gray-300 rounded text-sm font-semibold hover:bg-gray-50 text-center"
-                          >
-                            Buy Again
-                          </Link>
-                          {order.status === 'delivered' && (
-                            <Link
-                              to={`/customer/reviews?product=${item.product_id}`}
-                              className="px-4 py-2 border border-gray-300 rounded text-sm font-semibold hover:bg-gray-50 text-center"
-                            >
-                              Write Review
-                            </Link>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {order.items?.length > 3 && (
-                      <Link
-                        to={`/orders/${order.id}`}
-                        className="text-amazon-blue hover:underline text-sm"
-                      >
-                        View {order.items.length - 3} more items
-                      </Link>
-                    )}
-                  </div>
-
-                  <div className="flex gap-3 mt-6 pt-6 border-t">
-                    <Link
-                      to={`/orders/${order.id}`}
-                      className="px-6 py-2 bg-[#FF9900] hover:bg-[#F08804] text-white rounded font-semibold"
-                    >
-                      Track Package
-                    </Link>
-                    {(order.status === 'pending_payment' || order.status === 'paid' || order.status === 'confirmed') && (
-                      <button 
-                        onClick={() => handleCancelOrder(order.id)}
-                        disabled={cancellingOrder === order.id}
-                        className="px-6 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {cancellingOrder === order.id ? 'Cancelling...' : 'Cancel Order'}
-                      </button>
-                    )}
-                    {order.status === 'delivered' && (
-                      <Link
-                        to={`/customer/returns?order=${order.id}`}
-                        className="px-6 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50"
-                      >
-                        Return Items
-                      </Link>
-                    )}
-                    {order.status === 'shipped' && (
-                      <button className="px-6 py-2 border border-gray-300 rounded font-semibold hover:bg-gray-50">
-                        Contact Seller
-                      </button>
-                    )}
-                  </div>
-                </div>
+            {/* Infinite Scroll Trigger - Requirement 9.7 */}
+            {hasMore && (
+              <div ref={observerTarget} className="py-8 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF9900]"></div>
+                <p className="mt-2 text-gray-600">Loading more orders...</p>
               </div>
-            ))}
+            )}
+
+            {!hasMore && displayedItems.length > 0 && (
+              <div className="py-8 text-center text-gray-500">
+                <p>You've reached the end of your orders</p>
+              </div>
+            )}
           </div>
         )}
       </div>

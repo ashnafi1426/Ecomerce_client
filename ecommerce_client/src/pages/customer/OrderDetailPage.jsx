@@ -3,11 +3,21 @@ import { useParams } from 'react-router-dom'
 import api from '../../config/api'
 import { toast } from 'react-toastify'
 import StartChatButton from '../../components/chat/StartChatButton'
+import OrderDetailView from '../../components/order/OrderDetailView'
+import RealTimeStatusUpdater from '../../components/order/RealTimeStatusUpdater'
+import ReplacementRequestForm from '../../components/replacement/ReplacementRequestForm'
+import RefundRequestForm from '../../components/refund/RefundRequestForm'
+import { customerAPI } from '../../services/api.service'
 
 const OrderDetailPage = () => {
   const { orderId } = useParams()
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [showReplacementModal, setShowReplacementModal] = useState(false)
+  const [showRefundModal, setShowRefundModal] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [submittingReplacement, setSubmittingReplacement] = useState(false)
+  const [submittingRefund, setSubmittingRefund] = useState(false)
 
   useEffect(() => {
     fetchOrderDetail()
@@ -17,12 +27,14 @@ const OrderDetailPage = () => {
     try {
       console.log('Fetching order:', orderId)
       const response = await api.get(`/orders/${orderId}`)
-      console.log('Order data received:', response)
+      console.log('Order data received from interceptor:', response)
       
-      // The API interceptor returns response.data, which is { success: true, data: {...} }
-      // So we need to access response.data (not response.data.data)
+      // The API interceptor already extracts response.data
+      // If the API returns { success: true, data: {...} }, we need response.data
+      // If the API returns just the order object, we use response directly
       const orderData = response.data || response
-      console.log('Setting order:', orderData)
+      console.log('Extracted order data:', orderData)
+      console.log('Setting order to state:', orderData)
       setOrder(orderData)
     } catch (error) {
       console.error('Failed to fetch order:', orderId, error)
@@ -32,119 +44,189 @@ const OrderDetailPage = () => {
     }
   }
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>
+  // Handle real-time status updates
+  const handleStatusUpdate = (update) => {
+    console.log('📢 Received status update:', update)
+    setOrder(prevOrder => ({
+      ...prevOrder,
+      status: update.status,
+      timeline: [
+        ...(prevOrder.timeline || []),
+        {
+          status: update.status,
+          timestamp: update.timestamp,
+          notes: update.message
+        }
+      ]
+    }))
   }
 
-  if (!order) {
-    return (
-      <div className="max-w-4xl mx-auto p-6 text-center">
-        <div className="text-6xl mb-4">📦</div>
-        <h2 className="text-2xl font-bold mb-2">Order not found</h2>
-        <p className="text-gray-600 mb-4">The order you're looking for doesn't exist</p>
-        <p className="text-sm text-gray-500 font-mono bg-gray-100 p-2 rounded">
-          Order ID: {orderId}
-        </p>
-        <button
-          onClick={() => window.history.back()}
-          className="mt-4 px-4 py-2 bg-amazon-orange text-white rounded hover:bg-orange-600"
-        >
-          Go Back
-        </button>
-      </div>
-    )
+  // Handle real-time tracking updates
+  const handleTrackingUpdate = (update) => {
+    console.log('📍 Received tracking update:', update)
+    setOrder(prevOrder => ({
+      ...prevOrder,
+      tracking_number: update.tracking_number,
+      carrier: update.carrier,
+      tracking_url: update.tracking_url
+    }))
+  }
+
+  // Handle replacement request - Task 38
+  const handleRequestReplacement = (item) => {
+    console.log('Request replacement for item:', item)
+    setSelectedItem(item)
+    setShowReplacementModal(true)
+  }
+
+  // Handle replacement form submission - Task 38
+  const handleReplacementSubmit = async (formData) => {
+    try {
+      setSubmittingReplacement(true)
+      
+      // Call POST /api/replacements endpoint
+      await customerAPI.createReplacementRequest(formData)
+      
+      toast.success('Replacement request submitted successfully!')
+      setShowReplacementModal(false)
+      setSelectedItem(null)
+      
+      // Refresh order to show the new replacement request
+      await fetchOrderDetail()
+    } catch (error) {
+      console.error('Failed to submit replacement request:', error)
+      throw error // Let the form component handle the error
+    } finally {
+      setSubmittingReplacement(false)
+    }
+  }
+
+  // Handle refund request - Task 40.2
+  const handleRequestRefund = (item) => {
+    console.log('Request refund for item:', item)
+    setSelectedItem(item)
+    setShowRefundModal(true)
+  }
+
+  // Handle refund form submission - Task 40.2
+  const handleRefundSubmit = async (formData) => {
+    try {
+      setSubmittingRefund(true)
+      
+      // Call POST /api/refunds endpoint - Requirement 3.3
+      await customerAPI.createRefundRequest(formData)
+      
+      toast.success('Refund request submitted successfully!')
+      setShowRefundModal(false)
+      setSelectedItem(null)
+      
+      // Refresh order to show the new refund request
+      await fetchOrderDetail()
+    } catch (error) {
+      console.error('Failed to submit refund request:', error)
+      throw error // Let the form component handle the error
+    } finally {
+      setSubmittingRefund(false)
+    }
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">Order Details</h1>
-      <p className="text-gray-600 mb-8">Order #{order.id}</p>
+    <div className="bg-gray-100 min-h-screen">
+      <div className="max-w-6xl mx-auto px-5 py-8">
+        {/* Real-Time Status Updater */}
+        {order && !loading && (
+          <div className="mb-4 flex justify-end">
+            <RealTimeStatusUpdater
+              orderId={orderId}
+              onStatusUpdate={handleStatusUpdate}
+              onTrackingUpdate={handleTrackingUpdate}
+            />
+          </div>
+        )}
 
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div>
-            <div className="text-sm text-gray-600 mb-1">Order Date</div>
-            <div className="font-semibold">
-              {new Date(order.createdAt).toLocaleDateString('en-US', { 
-                month: 'long', day: 'numeric', year: 'numeric' 
-              })}
-            </div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-600 mb-1">Total</div>
-            <div className="font-semibold text-xl">${order.total?.toFixed(2)}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-600 mb-1">Status</div>
-            <div className="font-semibold text-green-600">{order.status}</div>
-          </div>
-        </div>
-
-        {/* Contact Support Button */}
-        <div className="border-t border-gray-200 pt-4 mb-6">
-          <div className="flex gap-3">
-            <StartChatButton
-              recipientId="support"
-              recipientName="Customer Support"
-              recipientRole="admin"
-              metadata={{
-                type: 'order_support',
-                orderId: order.id,
-                orderStatus: order.status
-              }}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              💬 Contact Support
-            </StartChatButton>
-            
-            {order.seller_id && (
+        {/* Contact Support Buttons */}
+        {order && !loading && (
+          <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
+            <div className="flex gap-3">
               <StartChatButton
-                recipientId={order.seller_id}
-                recipientName={order.seller_name || 'Seller'}
-                recipientRole="seller"
+                recipientId="support"
+                recipientName="Customer Support"
+                recipientRole="admin"
                 metadata={{
-                  type: 'order_inquiry',
+                  type: 'order_support',
                   orderId: order.id,
-                  orderNumber: order.order_number || order.id,
                   orderStatus: order.status
                 }}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg transition-colors border border-gray-300"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
               >
-                💬 Message Seller
+                💬 Contact Support
               </StartChatButton>
-            )}
-          </div>
-        </div>
-
-        <div className="border-t border-gray-200 pt-6">
-          <h3 className="font-semibold mb-4">Shipping Address</h3>
-          <div className="text-gray-700">
-            {order.shippingAddress?.fullName}<br />
-            {order.shippingAddress?.addressLine1}<br />
-            {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.postalCode}<br />
-            {order.shippingAddress?.country}
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="font-semibold mb-4">Order Items</h3>
-        <div className="space-y-4">
-          {order.items?.map((item) => (
-            <div key={item.id} className="flex gap-4 pb-4 border-b border-gray-200 last:border-0">
-              <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded flex items-center justify-center text-4xl">
-                {item.product?.emoji || '📦'}
-              </div>
-              <div className="flex-1">
-                <h4 className="font-semibold mb-1">{item.product?.name}</h4>
-                <div className="text-sm text-gray-600">Quantity: {item.quantity}</div>
-                <div className="text-lg font-bold text-amazon-orange mt-2">
-                  ${item.price?.toFixed(2)}
-                </div>
-              </div>
+              
+              {order.seller_id && (
+                <StartChatButton
+                  recipientId={order.seller_id}
+                  recipientName={order.seller_name || 'Seller'}
+                  recipientRole="seller"
+                  metadata={{
+                    type: 'order_inquiry',
+                    orderId: order.id,
+                    orderNumber: order.order_number || order.id,
+                    orderStatus: order.status
+                  }}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg transition-colors border border-gray-300"
+                >
+                  💬 Message Seller
+                </StartChatButton>
+              )}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+
+        {/* Order Detail View Component */}
+        <OrderDetailView
+          order={order}
+          loading={loading}
+          onRequestReplacement={handleRequestReplacement}
+          onRequestRefund={handleRequestRefund}
+        />
+
+        {/* Replacement Request Modal - Task 38 */}
+        {showReplacementModal && selectedItem && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <ReplacementRequestForm
+                orderId={orderId}
+                productId={selectedItem.product_id || selectedItem.productId}
+                productName={selectedItem.product?.title || selectedItem.product?.name || selectedItem.title || 'Product'}
+                onSubmit={handleReplacementSubmit}
+                onCancel={() => {
+                  setShowReplacementModal(false)
+                  setSelectedItem(null)
+                }}
+                loading={submittingReplacement}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Refund Request Modal - Task 40.2 */}
+        {showRefundModal && selectedItem && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <RefundRequestForm
+                orderId={orderId}
+                productId={selectedItem.product_id || selectedItem.productId}
+                productName={selectedItem.product?.title || selectedItem.product?.name || selectedItem.title || 'Product'}
+                onSubmit={handleRefundSubmit}
+                onCancel={() => {
+                  setShowRefundModal(false)
+                  setSelectedItem(null)
+                }}
+                loading={submittingRefund}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

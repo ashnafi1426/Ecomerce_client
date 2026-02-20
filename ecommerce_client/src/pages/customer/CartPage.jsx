@@ -3,6 +3,9 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import { removeFromCart, updateQuantity, clearCart } from '../../store/slices/cartSlice'
 import { removeGuestCartItem, updateGuestCartItem, clearGuestCart } from '../../store/slices/guestCartSlice'
 import { toast } from 'react-hot-toast'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import DiscountSummary from '../../components/discount/DiscountSummary'
 
 const CartPage = () => {
   const dispatch = useAppDispatch()
@@ -14,6 +17,60 @@ const CartPage = () => {
   // Use guest cart if not logged in, otherwise use registered cart
   const items = user ? registeredCart.items : guestCart.items
   const isGuest = !user
+
+  // State for discounted cart items
+  const [discountedItems, setDiscountedItems] = useState([])
+  const [totalSavings, setTotalSavings] = useState(0)
+  const [isLoadingDiscounts, setIsLoadingDiscounts] = useState(false)
+
+  // Apply discounts when cart changes
+  useEffect(() => {
+    const applyDiscounts = async () => {
+      if (items.length === 0) {
+        setDiscountedItems([])
+        setTotalSavings(0)
+        return
+      }
+
+      setIsLoadingDiscounts(true)
+      try {
+        const cartItems = items.map(item => ({
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.price,
+          name: item.name,
+          categoryId: item.category_id
+        }))
+
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/discounts/apply-to-cart`,
+          { cartItems }
+        )
+
+        if (response.data.success) {
+          setDiscountedItems(response.data.data.items || [])
+          setTotalSavings(response.data.data.totalSavings || 0)
+          
+          // Show notification if discounts were applied
+          if (response.data.data.totalSavings > 0) {
+            toast.success(`🎉 You're saving $${response.data.data.totalSavings.toFixed(2)}!`, {
+              duration: 4000,
+              icon: '💰'
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error applying discounts:', error)
+        // Silently fail - cart still works without discounts
+        setDiscountedItems([])
+        setTotalSavings(0)
+      } finally {
+        setIsLoadingDiscounts(false)
+      }
+    }
+
+    applyDiscounts()
+  }, [items])
 
   const handleRemove = (id) => {
     if (isGuest) {
@@ -54,7 +111,17 @@ const CartPage = () => {
     }
   }
 
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  // Calculate prices using discounted items if available
+  const getItemPrice = (item) => {
+    const discountedItem = discountedItems.find(d => d.productId === item.id)
+    return discountedItem?.discountedPrice || item.price
+  }
+
+  const subtotal = items.reduce((sum, item) => {
+    const price = getItemPrice(item)
+    return sum + (price * item.quantity)
+  }, 0)
+  
   const shipping = subtotal > 50 ? 0 : 5.99
   const tax = subtotal * 0.08
   const totalAmount = subtotal + shipping + tax
@@ -87,6 +154,11 @@ const CartPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Cart Items */}
           <div className="lg:col-span-2">
+            {/* Discount Summary */}
+            {discountedItems.length > 0 && totalSavings > 0 && (
+              <DiscountSummary items={discountedItems} totalSavings={totalSavings} />
+            )}
+
             <div className="bg-white rounded-lg p-5">
               <div className="flex justify-between items-center mb-4 pb-4 border-b border-[#D5D9D9]">
                 <h2 className="text-xl font-bold text-[#0F1111]">Cart Items ({items.length})</h2>
@@ -98,71 +170,93 @@ const CartPage = () => {
                 </button>
               </div>
 
-              {items.map((item) => (
-                <div key={item.id} className="flex gap-4 py-4 border-b border-[#D5D9D9] last:border-b-0">
-                  {item.image && item.image.startsWith('http') ? (
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-32 h-32 object-cover rounded border border-[#D5D9D9]"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150"%3E%3Crect fill="%23f3f4f6" width="150" height="150"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="60"%3E📦%3C/text%3E%3C/svg%3E';
-                      }}
-                    />
-                  ) : (
-                    <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-6xl rounded border border-[#D5D9D9]">
-                      📦
-                    </div>
-                  )}
-                  
-                  <div className="flex-1">
-                    <Link
-                      to={`/product/${item.id}`}
-                      className="text-lg font-semibold text-[#0F1111] hover:text-[#C7511F] line-clamp-2"
-                    >
-                      {item.name}
-                    </Link>
-                    
-                    <div className="text-[#007600] text-sm my-1 font-semibold">In Stock</div>
-                    
-                    <div className="flex items-center gap-4 mt-3">
-                      <div className="flex items-center gap-2">
-                        <label className="text-sm font-semibold text-[#0F1111]">Qty:</label>
-                        <select
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
-                          className="border border-[#D5D9D9] rounded px-2 py-1 bg-white"
-                        >
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                            <option key={num} value={num}>{num}</option>
-                          ))}
-                        </select>
+              {items.map((item) => {
+                const discountedItem = discountedItems.find(d => d.productId === item.id)
+                const finalPrice = discountedItem?.discountedPrice || item.price
+                const hasDiscount = discountedItem && discountedItem.appliedDiscounts?.length > 0
+
+                return (
+                  <div key={item.id} className="flex gap-4 py-4 border-b border-[#D5D9D9] last:border-b-0">
+                    {item.image && item.image.startsWith('http') ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-32 h-32 object-cover rounded border border-[#D5D9D9]"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150"%3E%3Crect fill="%23f3f4f6" width="150" height="150"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="60"%3E📦%3C/text%3E%3C/svg%3E';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-6xl rounded border border-[#D5D9D9]">
+                        📦
                       </div>
-                      
-                      <button
-                        onClick={() => handleRemove(item.id)}
-                        className="text-[#007185] hover:text-[#C7511F] hover:underline text-sm"
+                    )}
+                    
+                    <div className="flex-1">
+                      <Link
+                        to={`/product/${item.id}`}
+                        className="text-lg font-semibold text-[#0F1111] hover:text-[#C7511F] line-clamp-2"
                       >
-                        Delete
-                      </button>
+                        {item.name}
+                      </Link>
                       
-                      <button className="text-[#007185] hover:text-[#C7511F] hover:underline text-sm">
-                        Save for later
-                      </button>
+                      {hasDiscount && (
+                        <div className="inline-block bg-[#CC0C39] text-white text-xs font-bold px-2 py-1 rounded mt-1">
+                          DISCOUNT APPLIED
+                        </div>
+                      )}
+                      
+                      <div className="text-[#007600] text-sm my-1 font-semibold">In Stock</div>
+                      
+                      <div className="flex items-center gap-4 mt-3">
+                        <div className="flex items-center gap-2">
+                          <label className="text-sm font-semibold text-[#0F1111]">Qty:</label>
+                          <select
+                            value={item.quantity}
+                            onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
+                            className="border border-[#D5D9D9] rounded px-2 py-1 bg-white"
+                          >
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                              <option key={num} value={num}>{num}</option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <button
+                          onClick={() => handleRemove(item.id)}
+                          className="text-[#007185] hover:text-[#C7511F] hover:underline text-sm"
+                        >
+                          Delete
+                        </button>
+                        
+                        <button className="text-[#007185] hover:text-[#C7511F] hover:underline text-sm">
+                          Save for later
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-[#B12704]">
+                        ${(finalPrice * item.quantity).toFixed(2)}
+                      </div>
+                      {hasDiscount && (
+                        <div className="text-sm text-[#565959] line-through">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </div>
+                      )}
+                      <div className="text-sm text-[#565959]">
+                        ${finalPrice.toFixed(2)} each
+                      </div>
+                      {hasDiscount && discountedItem.savings > 0 && (
+                        <div className="text-sm text-[#007600] font-semibold mt-1">
+                          Save ${discountedItem.savings.toFixed(2)}
+                        </div>
+                      )}
                     </div>
                   </div>
-                  
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-[#B12704]">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </div>
-                    <div className="text-sm text-[#565959]">
-                      ${item.price.toFixed(2)} each
-                    </div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -176,6 +270,12 @@ const CartPage = () => {
                   <span>Subtotal ({items.length} items):</span>
                   <span className="font-semibold">${subtotal.toFixed(2)}</span>
                 </div>
+                {totalSavings > 0 && (
+                  <div className="flex justify-between text-[#007600]">
+                    <span>Discount Savings:</span>
+                    <span className="font-semibold">-${totalSavings.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span>Shipping:</span>
                   <span className="font-semibold">
@@ -193,11 +293,21 @@ const CartPage = () => {
                 <span className="text-[#B12704]">${totalAmount.toFixed(2)}</span>
               </div>
               
+              {totalSavings > 0 && (
+                <div className="bg-[#F0F8FF] border border-[#007185] rounded p-3 mb-4">
+                  <div className="flex items-center gap-2 text-[#007600] font-semibold">
+                    <span>💰</span>
+                    <span>You're saving ${totalSavings.toFixed(2)}!</span>
+                  </div>
+                </div>
+              )}
+              
               <button
                 onClick={handleCheckout}
-                className="block w-full bg-[#FFD814] hover:bg-[#F7CA00] border border-[#FCD200] rounded-full py-3 font-semibold text-center mb-2"
+                disabled={isLoadingDiscounts}
+                className="block w-full bg-[#FFD814] hover:bg-[#F7CA00] border border-[#FCD200] rounded-full py-3 font-semibold text-center mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isGuest ? 'Checkout as Guest' : 'Proceed to Checkout'}
+                {isLoadingDiscounts ? 'Calculating discounts...' : (isGuest ? 'Checkout as Guest' : 'Proceed to Checkout')}
               </button>
               
               {isGuest && (

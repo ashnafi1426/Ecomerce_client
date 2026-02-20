@@ -279,6 +279,80 @@ export const adminAPI = {
   approveRefund: (id) => api.post(`/admin/refunds/${id}/approve`),
   processRefund: (id, data) => api.post(`/admin/payments/${id}/refund`, data),
   
+  // Replacement and Refund Management
+  getAllReplacements: async (params) => {
+    console.log('🔍 adminAPI.getAllReplacements called with params:', params);
+    try {
+      const result = await api.get('/replacements', params);
+      console.log('✅ adminAPI.getAllReplacements success:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ adminAPI.getAllReplacements error:', error);
+      throw error;
+    }
+  },
+  getAllRefunds: async (params) => {
+    console.log('🔍 adminAPI.getAllRefunds called with params:', params);
+    try {
+      const result = await api.get('/refunds', params);
+      console.log('✅ adminAPI.getAllRefunds success:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ adminAPI.getAllRefunds error:', error);
+      throw error;
+    }
+  },
+  overrideReplacementDecision: async (id, data) => {
+    console.log('🔍 adminAPI.overrideReplacementDecision called:', { id, data });
+    try {
+      const result = await api.post(`/replacements/${id}/override`, data);
+      console.log('✅ adminAPI.overrideReplacementDecision success:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ adminAPI.overrideReplacementDecision error:', error);
+      throw error;
+    }
+  },
+  overrideRefundDecision: async (id, data) => {
+    console.log('🔍 adminAPI.overrideRefundDecision called:', { id, data });
+    try {
+      const result = await api.post(`/refunds/${id}/override`, data);
+      console.log('✅ adminAPI.overrideRefundDecision success:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ adminAPI.overrideRefundDecision error:', error);
+      throw error;
+    }
+  },
+  exportReplacementsCSV: async (params) => {
+    console.log('🔍 adminAPI.exportReplacementsCSV called with params:', params);
+    try {
+      const response = await apiClient.get('/replacements/export', {
+        params,
+        responseType: 'blob'
+      });
+      console.log('✅ adminAPI.exportReplacementsCSV success');
+      return response;
+    } catch (error) {
+      console.error('❌ adminAPI.exportReplacementsCSV error:', error);
+      throw error;
+    }
+  },
+  exportRefundsCSV: async (params) => {
+    console.log('🔍 adminAPI.exportRefundsCSV called with params:', params);
+    try {
+      const response = await apiClient.get('/refunds/export', {
+        params,
+        responseType: 'blob'
+      });
+      console.log('✅ adminAPI.exportRefundsCSV success');
+      return response;
+    } catch (error) {
+      console.error('❌ adminAPI.exportRefundsCSV error:', error);
+      throw error;
+    }
+  },
+  
   // Stripe Admin Payment System
   getStripePayments: async (params) => {
     console.log('🔍 adminAPI.getStripePayments called with params:', params);
@@ -467,6 +541,9 @@ export const managerAPI = {
   getPendingRefunds: (params) => api.get('/manager/refunds/pending', params),
   getRefundDetails: (id) => api.get(`/manager/refunds/${id}`),
   processRefund: (id, data) => api.post(`/manager/refunds/${id}/process`, data),
+  getManagerRefundRequests: (params) => api.get('/refunds/manager-requests', params),
+  approveRefundRequest: (id) => api.patch(`/refunds/${id}/approve`),
+  rejectRefundRequest: (id, data) => api.patch(`/refunds/${id}/reject`, data),
   
   // Support Tickets
   getSupportTickets: (params) => api.get('/manager/support/tickets', params),
@@ -637,6 +714,17 @@ export const customerAPI = {
   getReturn: (id) => api.get(`/returns/${id}`),
   getReturnsByOrder: (orderId) => api.get(`/returns/order/${orderId}`),
   createReturn: (data) => api.post('/returns', data),
+  
+  // Refunds
+  getMyRefundRequests: (params) => api.get('/refunds', params),
+  getRefundRequest: (id) => api.get(`/refunds/${id}`),
+  createRefundRequest: (data) => api.post('/refunds', data),
+  calculateRefundAmount: (data) => api.post('/refunds/calculate', data),
+  
+  // Replacements
+  getMyReplacementRequests: (params) => api.get('/replacements/my-requests', params),
+  getReplacementRequest: (id) => api.get(`/replacements/${id}`),
+  createReplacementRequest: (data) => api.post('/replacements', data),
   
   // Wishlist
   getWishlist: () => api.get('/wishlist'),

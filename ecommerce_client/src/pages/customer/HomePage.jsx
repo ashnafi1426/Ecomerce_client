@@ -183,7 +183,7 @@ const HomePage = () => {
       // Fetch all data in parallel
       const [categoriesRes, productsRes] = await Promise.all([
         customerAPI.getCategories(),
-        customerAPI.getProducts({ limit: 100 }) // Fetch more products for filtering
+        customerAPI.getProducts() // Fetch ALL products from database
       ]);
 
       console.log('📂 Categories response:', categoriesRes);
@@ -193,13 +193,28 @@ const HomePage = () => {
       const categoryList = Array.isArray(categoriesRes) ? categoriesRes : categoriesRes?.data || categoriesRes?.categories || [];
       setCategories(categoryList);
 
-      // Set products - ensure only approved products are shown
+      // Set products - backend already filters to approved products
       const productList = Array.isArray(productsRes) ? productsRes : productsRes?.data || productsRes?.products || [];
       
-      // Filter to only approved products (extra safety check)
-      const approvedProducts = productList.filter(product => 
-        product.approval_status === 'approved' && product.status === 'active'
-      );
+      console.log('📦 Products received from API:', productList.length);
+      console.log('📦 Sample product:', productList[0]);
+      
+      // Backend already filters to approved+active, but we'll keep a safety check
+      // Note: Some products might not have these fields, so we'll be lenient
+      const approvedProducts = productList.filter(product => {
+        // If approval_status exists, it must be 'approved'
+        // If status exists, it must be 'active'
+        // If fields don't exist, include the product (backend already filtered)
+        const hasApprovalStatus = product.approval_status !== undefined;
+        const hasStatus = product.status !== undefined;
+        
+        const isApproved = !hasApprovalStatus || product.approval_status === 'approved';
+        const isActive = !hasStatus || product.status === 'active';
+        
+        return isApproved && isActive;
+      });
+      
+      console.log('📦 Products after filtering:', approvedProducts.length);
       
       setAllProducts(approvedProducts);
 
