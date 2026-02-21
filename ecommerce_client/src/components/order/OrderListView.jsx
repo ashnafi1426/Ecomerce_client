@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import OrderStatusBadge from './OrderStatusBadge'
 
 /**
  * OrderListView Component
@@ -10,21 +11,6 @@ import PropTypes from 'prop-types'
  * Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7
  */
 const OrderListView = ({ orders, onOrderClick, loading = false }) => {
-  const getStatusColor = (status) => {
-    const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      pending_payment: 'bg-yellow-100 text-yellow-800',
-      paid: 'bg-blue-100 text-blue-800',
-      confirmed: 'bg-blue-100 text-blue-800',
-      packed: 'bg-purple-100 text-purple-800',
-      shipped: 'bg-purple-100 text-purple-800',
-      delivered: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      refunded: 'bg-gray-100 text-gray-800'
-    }
-    return colors[status] || 'bg-gray-100 text-gray-800'
-  }
-
   const getStatusDisplayName = (status) => {
     const displayNames = {
       pending: 'Pending',
@@ -35,7 +21,8 @@ const OrderListView = ({ orders, onOrderClick, loading = false }) => {
       shipped: 'Shipped',
       delivered: 'Delivered',
       cancelled: 'Cancelled',
-      refunded: 'Refunded'
+      refunded: 'Refunded',
+      out_for_delivery: 'Out for Delivery'
     }
     return displayNames[status] || status
   }
@@ -53,16 +40,44 @@ const OrderListView = ({ orders, onOrderClick, loading = false }) => {
   }
 
   const getProductThumbnail = (item) => {
-    // Try different possible image URL fields
-    const imageUrl = item.product?.image_url || 
-                     item.product?.image || 
-                     item.image_url || 
-                     item.image
+    // Comprehensive null checks and handle all possible image property variations
+    // Support both snake_case and camelCase properties from API responses
+    
+    // Check for nested product object first, then direct properties
+    // Handle both snake_case (product_image) and camelCase (productImage) variations
+    const imageUrl = item?.product?.image_url || 
+                     item?.product?.image || 
+                     item?.product?.imageUrl ||
+                     item?.product?.product_image ||
+                     item?.product?.productImage ||
+                     item?.image_url || 
+                     item?.image ||
+                     item?.imageUrl ||
+                     item?.product_image ||
+                     item?.productImage
 
-    if (imageUrl && imageUrl.startsWith('http')) {
-      return imageUrl
+    // Validate that imageUrl exists, is a string, and is a valid HTTP/HTTPS URL
+    if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '') {
+      const trimmedUrl = imageUrl.trim()
+      if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+        return trimmedUrl
+      }
     }
+    
+    // Return null if no valid image URL found - placeholder will be shown
     return null
+  }
+
+  const getProductTitle = (item) => {
+    // Extract product title with comprehensive fallback logic
+    // Check for nested product object first, then direct properties
+    const title = item?.product?.title || 
+                  item?.product?.name || 
+                  item?.title || 
+                  item?.name
+
+    // Return the title if found, otherwise return 'Product' as fallback
+    return title || 'Product'
   }
 
   const handleOrderClick = (orderId) => {
@@ -126,10 +141,8 @@ const OrderListView = ({ orders, onOrderClick, loading = false }) => {
               <div className="text-xs text-gray-600 uppercase mb-1">
                 Order # {order.order_number || order.id.substring(0, 8)}
               </div>
-              {/* Status Badge - Requirement 9.6 */}
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}>
-                {getStatusDisplayName(order.status)}
-              </span>
+              {/* Status Badge - Requirement 9.6 - Using OrderStatusBadge component */}
+              <OrderStatusBadge status={order.status} size="sm" />
             </div>
           </div>
 
@@ -140,23 +153,29 @@ const OrderListView = ({ orders, onOrderClick, loading = false }) => {
               <div className="flex -space-x-2">
                 {order.items?.slice(0, 3).map((item, index) => {
                   const thumbnailUrl = getProductThumbnail(item)
+                  const productTitle = getProductTitle(item)
                   return (
                     <div key={index} className="relative">
                       {thumbnailUrl ? (
                         <img
                           src={thumbnailUrl}
-                          alt={item.product?.title || item.product?.name || item.title || 'Product'}
+                          alt={productTitle}
                           className="w-16 h-16 object-cover rounded border-2 border-white"
                           onError={(e) => {
+                            // Fallback to placeholder if image fails to load
                             e.target.onerror = null
-                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect fill="%23f3f4f6" width="64" height="64"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="24"%3E📦%3C/text%3E%3C/svg%3E'
+                            e.target.style.display = 'none'
+                            e.target.nextElementSibling.style.display = 'flex'
                           }}
                         />
-                      ) : (
-                        <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-2xl rounded border-2 border-white">
-                          📦
-                        </div>
-                      )}
+                      ) : null}
+                      {/* Default placeholder - shown when no image URL or on image load error */}
+                      <div 
+                        className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-2xl rounded border-2 border-white"
+                        style={{ display: thumbnailUrl ? 'none' : 'flex' }}
+                      >
+                        📦
+                      </div>
                     </div>
                   )
                 })}
@@ -198,10 +217,7 @@ const OrderListView = ({ orders, onOrderClick, loading = false }) => {
             {order.items && order.items.length > 0 && (
               <div className="text-sm text-gray-600 border-t pt-4">
                 <span className="font-medium">
-                  {order.items[0].product?.title || 
-                   order.items[0].product?.name || 
-                   order.items[0].title || 
-                   'Product'}
+                  {getProductTitle(order.items[0])}
                 </span>
                 {order.items.length > 1 && (
                   <span> and {order.items.length - 1} more {order.items.length === 2 ? 'item' : 'items'}</span>

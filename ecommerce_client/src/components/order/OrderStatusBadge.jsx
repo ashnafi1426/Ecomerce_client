@@ -4,9 +4,20 @@ import PropTypes from 'prop-types'
  * Displays order status with color-coded badges.
  * Color coding: yellow=pending, blue=confirmed, purple=shipped, green=delivered
  * Requirement: 9.6
+ * 
+ * Normalizes status values to handle case variations from API
  */
 const OrderStatusBadge = ({ status, size = 'md' }) => {
+  // Normalize status value - handle case variations and trim whitespace
+  const normalizeStatus = (status) => {
+    if (!status || typeof status !== 'string') return 'pending'
+    return status.toLowerCase().trim().replace(/\s+/g, '_')
+  }
+
   const getStatusConfig = (status) => {
+    // Normalize the status before lookup
+    const normalizedStatus = normalizeStatus(status)
+    
     const configs = {
       pending: {
         color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
@@ -57,12 +68,18 @@ const OrderStatusBadge = ({ status, size = 'md' }) => {
         color: 'bg-gray-100 text-gray-800 border-gray-300',
         label: 'Refunded',
         icon: '💰'
+      },
+      // Additional status variations for comprehensive coverage
+      processing: {
+        color: 'bg-blue-100 text-blue-800 border-blue-300',
+        label: 'Processing',
+        icon: '⚙️'
       }
     }
 
-    return configs[status] || {
+    return configs[normalizedStatus] || {
       color: 'bg-gray-100 text-gray-800 border-gray-300',
-      label: status.replace('_', ' ').toUpperCase(),
+      label: normalizedStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
       icon: '📍'
     }
   }

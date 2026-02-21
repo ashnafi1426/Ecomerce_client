@@ -19,6 +19,16 @@ const ReplacementRequestForm = ({
   onCancel,
   loading = false 
 }) => {
+  // Debug logging for prop validation
+  console.log('[ReplacementRequestForm] Component mounted with props:', {
+    orderId,
+    productId,
+    productName: productName || 'N/A',
+    hasOnSubmit: typeof onSubmit === 'function',
+    hasOnCancel: typeof onCancel === 'function',
+    loading
+  })
+
   const [formData, setFormData] = useState({
     reason: '',
     description: ''
@@ -164,7 +174,28 @@ const ReplacementRequestForm = ({
       return
     }
 
+    // Validate required props before submission
+    if (!orderId || !productId) {
+      console.error('[ReplacementRequestForm] Missing required data:', { orderId, productId })
+      toast.error('Missing order or product information. Please try again.')
+      return
+    }
+
+    if (typeof onSubmit !== 'function') {
+      console.error('[ReplacementRequestForm] onSubmit is not a function')
+      toast.error('Form submission handler is not available')
+      return
+    }
+
     try {
+      console.log('[ReplacementRequestForm] Submitting replacement request:', {
+        orderId,
+        productId,
+        reason: formData.reason,
+        descriptionLength: formData.description.trim().length,
+        photoCount: photoUrls.length
+      })
+
       // Task 35.3: Call POST /api/replacements endpoint
       await onSubmit({
         orderId,
@@ -173,8 +204,10 @@ const ReplacementRequestForm = ({
         description: formData.description.trim(),
         photoUrls
       })
+
+      console.log('[ReplacementRequestForm] Replacement request submitted successfully')
     } catch (error) {
-      console.error('Form submission error:', error)
+      console.error('[ReplacementRequestForm] Form submission error:', error)
       toast.error(error.message || 'Failed to submit replacement request')
     }
   }
@@ -183,7 +216,14 @@ const ReplacementRequestForm = ({
     <div className="bg-white rounded-lg shadow-lg max-w-2xl mx-auto">
       <div className="p-6 border-b">
         <h2 className="text-2xl font-bold">Request Replacement</h2>
-        <p className="text-gray-600 mt-1">Product: {productName}</p>
+        <p className="text-gray-600 mt-1">
+          Product: {productName || 'Product'}
+        </p>
+        {!productName && (
+          <p className="text-xs text-amber-600 mt-1">
+            ⚠️ Product name not available
+          </p>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -346,10 +386,15 @@ const ReplacementRequestForm = ({
 ReplacementRequestForm.propTypes = {
   orderId: PropTypes.string.isRequired,
   productId: PropTypes.string.isRequired,
-  productName: PropTypes.string.isRequired,
+  productName: PropTypes.string, // Optional - will show 'Product' as fallback
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   loading: PropTypes.bool
+}
+
+ReplacementRequestForm.defaultProps = {
+  productName: 'Product',
+  loading: false
 }
 
 export default ReplacementRequestForm

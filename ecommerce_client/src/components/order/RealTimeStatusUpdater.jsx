@@ -84,9 +84,9 @@ const RealTimeStatusUpdater = ({
     console.log('🔌 Connecting to WebSocket...')
     setConnectionStatus('connecting')
 
-    const socket = io(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}`, {
+    // Use VITE_SOCKET_URL for WebSocket connections (not VITE_API_URL which includes /api)
+    const socket = io(`${import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'}/order-tracking`, {
       auth: { token },
-      query: { orderId },
       transports: ['websocket', 'polling']
     })
 
@@ -96,8 +96,8 @@ const RealTimeStatusUpdater = ({
       setReconnectAttempts(0)
       stopPolling() // Stop polling if it was running
       
-      // Join order room
-      socket.emit('join_order', orderId)
+      // Subscribe to order updates
+      socket.emit('subscribe_order', { orderId })
     })
 
     socket.on('disconnect', (reason) => {

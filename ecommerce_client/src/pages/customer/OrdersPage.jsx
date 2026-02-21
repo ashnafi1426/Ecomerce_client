@@ -12,9 +12,54 @@ const OrdersPage = () => {
   const [filter, setFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [dateRange, setDateRange] = useState('all')
-  const [cancellingOrder, setCancellingOrder] = useState(null)
   const location = useLocation()
   const navigate = useNavigate()
+
+  /**
+   * Normalize order data from API responses
+   * Handles inconsistent structures and missing image properties
+   * Supports both snake_case and camelCase properties
+   */
+  const normalizeOrderData = (order) => {
+    if (!order) return null
+
+    // Normalize order items to ensure consistent image property access
+    const normalizedItems = order.items?.map(item => {
+      if (!item) return item
+
+      // Extract image URL from various possible locations
+      const imageUrl = item?.product?.image_url || 
+                       item?.product?.image || 
+                       item?.product?.imageUrl ||
+                       item?.product?.product_image ||
+                       item?.product?.productImage ||
+                       item?.image_url || 
+                       item?.image ||
+                       item?.imageUrl ||
+                       item?.product_image ||
+                       item?.productImage
+
+      // Create normalized item with consistent structure
+      return {
+        ...item,
+        // Preserve original product object
+        product: {
+          ...(item.product || {}),
+          // Add normalized image_url property
+          image_url: imageUrl || null,
+          // Preserve other common variations for compatibility
+          image: imageUrl || null,
+          imageUrl: imageUrl || null
+        }
+      }
+    }) || []
+
+    // Return normalized order with consistent structure
+    return {
+      ...order,
+      items: normalizedItems
+    }
+  }
 
   useEffect(() => {
     fetchOrders()
@@ -110,7 +155,11 @@ const OrdersPage = () => {
         })
       }
       
-      setOrders(ordersData)
+      // Normalize order data to handle inconsistent API response structures
+      const normalizedOrders = ordersData.map(order => normalizeOrderData(order)).filter(Boolean)
+      console.log(`✅ Normalized ${normalizedOrders.length} orders`)
+      
+      setOrders(normalizedOrders)
       
       // Show success message if orders found
       if (ordersData.length > 0) {
@@ -133,20 +182,6 @@ const OrdersPage = () => {
     }
   }
 
-  const getStatusColor = (status) => {
-    const colors = {
-      pending_payment: 'bg-yellow-100 text-yellow-800',
-      paid: 'bg-blue-100 text-blue-800',
-      confirmed: 'bg-indigo-100 text-indigo-800',
-      packed: 'bg-purple-100 text-purple-800',
-      shipped: 'bg-orange-100 text-orange-800',
-      delivered: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      refunded: 'bg-gray-100 text-gray-800'
-    }
-    return colors[status] || 'bg-gray-100 text-gray-800'
-  }
-
   const getStatusDisplayName = (status) => {
     const displayNames = {
       pending_payment: 'Pending Payment',
@@ -159,20 +194,6 @@ const OrdersPage = () => {
       refunded: 'Refunded'
     }
     return displayNames[status] || status
-  }
-
-  const getStatusDescription = (status) => {
-    const descriptions = {
-      pending_payment: 'Payment is being processed',
-      paid: 'Payment completed successfully',
-      confirmed: 'Order confirmed and being prepared',
-      packed: 'Order packed and ready to ship',
-      shipped: 'Order is on the way',
-      delivered: 'Order has been delivered',
-      cancelled: 'Order was cancelled',
-      refunded: 'Order has been refunded'
-    }
-    return descriptions[status] || 'Order status'
   }
 
   // Filter orders based on search term, status, and date range - memoized to prevent infinite loop
@@ -237,25 +258,6 @@ const OrdersPage = () => {
     })
     
     return counts
-  }
-
-  // Cancel order function
-  const handleCancelOrder = async (orderId) => {
-    if (!window.confirm('Are you sure you want to cancel this order?')) {
-      return
-    }
-
-    try {
-      setCancellingOrder(orderId)
-      await customerAPI.cancelOrder(orderId)
-      toast.success('Order cancelled successfully')
-      fetchOrders() // Refresh orders
-    } catch (error) {
-      console.error('Failed to cancel order:', error)
-      toast.error(error.message || 'Failed to cancel order')
-    } finally {
-      setCancellingOrder(null)
-    }
   }
 
   // Export orders function

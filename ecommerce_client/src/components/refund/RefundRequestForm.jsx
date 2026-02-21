@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { toast } from 'react-hot-toast'
-import axios from 'axios'
+import { customerAPI } from '../../services/api.service'
 
 /**
  * RefundRequestForm Component
@@ -43,36 +43,57 @@ const RefundRequestForm = ({
   const MAX_PHOTOS = 5
   const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB in bytes
 
+  // Debug: Log props on mount for validation
+  useEffect(() => {
+    console.log('[RefundRequestForm] Component mounted with props:', {
+      orderId,
+      productId,
+      productName,
+      hasOnSubmit: typeof onSubmit === 'function',
+      hasOnCancel: typeof onCancel === 'function',
+      loading
+    })
+  }, [])
+
   // Fetch calculated refund amount on component mount - Requirement 3.6
   useEffect(() => {
     const fetchRefundAmount = async () => {
       try {
         setLoadingRefundAmount(true)
         
-        // Call backend API to calculate refund amount
-        const token = localStorage.getItem('token')
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/refunds/calculate`,
-          { orderId, productId },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
+        console.log('[RefundRequestForm] Fetching refund amount for:', { orderId, productId })
+        
+        // Call backend API to calculate refund amount using customerAPI
+        const response = await customerAPI.calculateRefundAmount({ orderId, productId })
 
-        if (response.data.success) {
-          setRefundAmount(response.data.data.refundAmount)
+        console.log('[RefundRequestForm] Refund amount response:', response)
+
+        if (response.success) {
+          setRefundAmount(response.data.refundAmount)
+          console.log('[RefundRequestForm] Refund amount set:', response.data.refundAmount)
+        } else {
+          console.warn('[RefundRequestForm] Refund amount calculation failed:', response)
+          // Set refund amount to null to show "Unable to calculate" message
+          setRefundAmount(null)
         }
       } catch (error) {
-        console.error('Error fetching refund amount:', error)
-        toast.error('Failed to calculate refund amount')
+        console.error('[RefundRequestForm] Error fetching refund amount:', error)
+        // Don't show error toast immediately - let user see the form
+        // The form will show "Unable to calculate" message
+        setRefundAmount(null)
       } finally {
         setLoadingRefundAmount(false)
       }
     }
 
-    fetchRefundAmount()
+    // Only fetch if we have valid orderId and productId
+    if (orderId && productId) {
+      fetchRefundAmount()
+    } else {
+      console.warn('[RefundRequestForm] Missing orderId or productId:', { orderId, productId })
+      setLoadingRefundAmount(false)
+      setRefundAmount(null)
+    }
   }, [orderId, productId])
 
   const handleInputChange = (e) => {
@@ -195,12 +216,35 @@ const RefundRequestForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    console.log('[RefundRequestForm] Form submission started')
+
     if (!validateForm()) {
       toast.error('Please fix the errors in the form')
       return
     }
 
+    // Validate required props
+    if (!orderId || !productId) {
+      console.error('[RefundRequestForm] Missing required props:', { orderId, productId })
+      toast.error('Missing order or product information')
+      return
+    }
+
+    if (typeof onSubmit !== 'function') {
+      console.error('[RefundRequestForm] onSubmit is not a function')
+      toast.error('Form submission handler is not configured')
+      return
+    }
+
     try {
+      console.log('[RefundRequestForm] Submitting refund request:', {
+        orderId,
+        productId,
+        reason: formData.reason,
+        descriptionLength: formData.description.trim().length,
+        photoCount: photoUrls.length
+      })
+
       // Call POST /api/refunds endpoint - Requirement 3.3, Task 40.2
       await onSubmit({
         orderId,
@@ -210,9 +254,10 @@ const RefundRequestForm = ({
         photoUrls
       })
       
+      console.log('[RefundRequestForm] Refund request submitted successfully')
       // Success message will be shown by parent component
     } catch (error) {
-      console.error('Form submission error:', error)
+      console.error('[RefundRequestForm] Form submission error:', error)
       // Error toast will be shown by parent component
       throw error
     }
@@ -222,7 +267,7 @@ const RefundRequestForm = ({
     <div className="bg-white rounded-lg shadow-lg max-w-2xl mx-auto">
       <div className="p-6 border-b">
         <h2 className="text-2xl font-bold">Request Refund</h2>
-        <p className="text-gray-600 mt-1">Product: {productName}</p>
+        <p className="text-gray-600 mt-1">Product: {productName || 'Unknown Product'}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -247,7 +292,10 @@ const RefundRequestForm = ({
                   <p className="text-xs text-gray-600 mt-1">Will be refunded to your account</p>
                 </div>
               ) : (
-                <p className="text-sm text-red-600">Unable to calculate</p>
+                <div>
+                  <p className="text-sm text-red-600">Unable to calculate</p>
+                  <p className="text-xs text-gray-500 mt-1">You can still submit the request</p>
+                </div>
               )}
             </div>
           </div>
@@ -412,10 +460,15 @@ const RefundRequestForm = ({
 RefundRequestForm.propTypes = {
   orderId: PropTypes.string.isRequired,
   productId: PropTypes.string.isRequired,
-  productName: PropTypes.string.isRequired,
+  productName: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   loading: PropTypes.bool
+}
+
+RefundRequestForm.defaultProps = {
+  productName: 'Unknown Product',
+  loading: false
 }
 
 export default RefundRequestForm
